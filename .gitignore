@@ -68,3 +68,7 @@ platformio.ini
 
 # VS Code
 .vscode/
+
+#Espressif_IDE Code
+.cproject
+.project
