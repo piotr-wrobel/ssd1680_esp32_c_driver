@@ -18,7 +18,7 @@
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
-#include "../libs/ssd1680/ssd1680.h"
+#include "lib_ssd1680.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -57,6 +57,21 @@
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WAPI_PSK
 #endif
 
+
+#define EPAPER_HOST    SPI2_HOST
+#define EPAPER_RES_X	250
+#define EPAPER_RES_Y	122
+
+#define PIN_NUM_MISO 25
+#define PIN_NUM_MOSI 23
+#define PIN_NUM_CLK  19
+#define PIN_NUM_CS   22
+
+#define PIN_NUM_DC   21
+#define PIN_NUM_RST  18
+#define PIN_NUM_BCKL 5
+
+
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -69,6 +84,7 @@ static EventGroupHandle_t s_wifi_event_group;
 static const char *TAG = "wifi station";
 
 static int s_retry_num = 0;
+
 
 
 static void event_handler(void* arg, esp_event_base_t event_base,
@@ -104,7 +120,6 @@ void wifi_init_sta(void)
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
     esp_event_handler_instance_t instance_any_id;
     esp_event_handler_instance_t instance_got_ip;
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
@@ -161,7 +176,17 @@ void wifi_init_sta(void)
 
 void app_main(void)
 {
-    //Initialize NVS
+	ssd1680_t * ssd1680_disp;
+	spi_host_device_t spi_host = EPAPER_HOST;
+
+	ssd1680_pinmap_t ssd1680_pinmap = {
+		    .busy = PIN_NUM_BCKL,
+		    .reset = PIN_NUM_RST,
+		    .dc = PIN_NUM_DC,
+		    .cs = PIN_NUM_CS
+	};
+
+	//Initialize NVSPIN_NUM_BCKL
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
       ESP_ERROR_CHECK(nvs_flash_erase());
@@ -171,4 +196,36 @@ void app_main(void)
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
+
+    //esp_err_t ret;
+    //spi_device_handle_t spi;
+    spi_bus_config_t buscfg = {
+        .miso_io_num = PIN_NUM_MISO,
+        .mosi_io_num = PIN_NUM_MOSI,
+        .sclk_io_num = PIN_NUM_CLK,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        //.max_transfer_sz = PARALLEL_LINES * 320 * 2 + 8
+    };
+   /*
+    spi_device_interface_config_t devcfg = {
+#ifdef CONFIG_LCD_OVERCLOCK
+        .clock_speed_hz = 26 * 1000 * 1000,     //Clock out at 26 MHz
+#else
+        .clock_speed_hz = 10 * 1000 * 1000,     //Clock out at 10 MHz
+#endif
+        .mode = 0,                              //SPI mode 0
+        .spics_io_num = PIN_NUM_CS,             //CS pin
+        .queue_size = 7,                        //We want to be able to queue 7 transactions at a time
+        .pre_cb = lcd_spi_pre_transfer_callback, //Specify pre-transfer callback to handle D/C line
+    };
+    */
+    //Initialize the SPI bus
+    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_DISABLED);
+    ESP_ERROR_CHECK(ret);
+
+
+
+    ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, SSD1680_NORMAL);
+    ssd1680_sleep(ssd1680_disp);
 }

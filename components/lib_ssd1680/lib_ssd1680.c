@@ -1,4 +1,4 @@
-#include "ssd1680.h"
+#include "lib_ssd1680.h"
 #include "ssd1680_regmap.h"
 
 #include <freertos/FreeRTOS.h>
@@ -51,7 +51,7 @@ static void ssd1680_wait_busy(ssd1680_t *disp)
 static void ssd1680_write(ssd1680_t *disp, ssd1360_regmap_t cmd, void *data, size_t data_size)
 {
     static spi_transaction_t trs;
-    
+
     trs.length = 8;
     trs.tx_buffer = &cmd;
     gpio_set_level(disp->pinmap.dc, 0);
