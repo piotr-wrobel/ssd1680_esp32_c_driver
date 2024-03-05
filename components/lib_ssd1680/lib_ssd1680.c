@@ -335,6 +335,10 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
     disp->framebuffer_red[idx] |= ((color >> 1) & 0x1) << offset;
 }
 
+void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color)
+{
+}
+
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)
 {
     memset(disp->framebuffer_bw, (color & 0x1) * 0xFF, disp->framebuffer_size);
