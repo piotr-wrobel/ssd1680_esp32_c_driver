@@ -337,6 +337,29 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
 
 void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color)
 {
+
+	int idx, offset;
+	uint8_t x1bits, x2bits;
+
+	switch (disp->orientation)
+	{
+		case SSD1680_90_DEG: case SSD1680_270_DEG:
+//			idx = (y >> 3);
+//			offset = 7 - (y - (idx << 3));
+//			idx = idx * disp->rows_cnt + x;
+		break;
+		default: // SSD1680_NORMAL || SSD1680_180_DEG
+			x1bits = (uint8_t)(x1 & 0xff);
+			x2bits = (uint8_t)(x2 & 0xff);
+
+//			idx = (x >> 3) + y * disp->clmn_cnt;
+//			offset = 7 - (x % 8);
+		break;
+	}
+//    disp->framebuffer_bw[idx] &= ~(1 << offset);
+//    disp->framebuffer_bw[idx] |= (color & 0x1) << offset;
+//    disp->framebuffer_red[idx] &= ~(1 << offset);
+//    disp->framebuffer_red[idx] |= ((color >> 1) & 0x1) << offset;
 }
 
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)
