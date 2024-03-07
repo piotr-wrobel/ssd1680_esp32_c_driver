@@ -338,8 +338,10 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
 void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color)
 {
 
-	int idx, offset;
+	static const uint8_t BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F };
+	int clmn_start, clmn_stop, idx; //offset;
 	uint8_t x1bits, x2bits;
+	uint16_t ycurr, xcurr;
 
 	switch (disp->orientation)
 	{
@@ -349,8 +351,37 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 //			idx = idx * disp->rows_cnt + x;
 		break;
 		default: // SSD1680_NORMAL || SSD1680_180_DEG
-			x1bits = (uint8_t)(x1 & 0xff);
-			x2bits = (uint8_t)(x2 & 0xff);
+			x1bits = 8 - (uint8_t)(x1 & 0x07);
+			x2bits = (uint8_t)(x2 & 0x07);
+			clmn_start = (x1 >> 3) % 8 ;
+			clmn_stop = (x2 + 7) % 8;
+
+			for ( ycurr = y1; ycurr <= y2; ycurr++)
+			{
+
+				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
+				{
+					idx = xcurr + ( ycurr * disp->clmn_cnt );
+					if( xcurr == clmn_start && x1bits > 0 )
+					{
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (*area >> (8 - x1bits));
+					} else if ( xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
+					{
+						disp->framebuffer_bw[idx] = *area; // ?????????
+					} else if ( xcurr == clmn_stop && x2bits > 0)
+					{
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ;
+						area++;
+					} else
+					{
+						if( x1bits > 0 )
+							disp->framebuffer_bw[idx] = (*area << x1bits) | (*(area + 1) >> (8 - x1bits));
+						else
+							disp->framebuffer_bw[idx] = *area;
+						area++;
+					}
+				}
+			}
 
 //			idx = (x >> 3) + y * disp->clmn_cnt;
 //			offset = 7 - (x % 8);
