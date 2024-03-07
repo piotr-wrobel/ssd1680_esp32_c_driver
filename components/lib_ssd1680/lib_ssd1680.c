@@ -48,7 +48,7 @@ static void ssd1680_wait_busy(ssd1680_t *disp)
     }
 }
 
-static void ssd1680_write(ssd1680_t *disp, ssd1360_regmap_t cmd, void *data, size_t data_size)
+static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 {
     static spi_transaction_t trs;
 
@@ -82,7 +82,7 @@ static void ssd1680_hw_reset(ssd1680_t *disp)
 
 static void ssd1680_sw_reset(ssd1680_t *disp)
 {
-    ssd1680_write(disp, SSD1360_SW_RESET, NULL, 0);
+    ssd1680_write(disp, SSD1680_SW_RESET, NULL, 0);
     ssd1680_wait_busy(disp);
     vTaskDelay(100);
 }
@@ -93,7 +93,7 @@ static void ssd1680_set_x_window(ssd1680_t *disp, uint16_t x_start, uint16_t x_s
         x_start & 0x1F,
         x_stop & 0x1F,
     };
-    ssd1680_write(disp, SSD1360_SET_RAM_X_ADDR, &wnd, sizeof(ssd1680_x_window_t));
+    ssd1680_write(disp, SSD1680_SET_RAM_X_ADDR, &wnd, sizeof(ssd1680_x_window_t));
     ssd1680_wait_busy(disp);
 }
 
@@ -105,7 +105,7 @@ static void ssd1680_set_y_window(ssd1680_t *disp, uint16_t y_start, uint16_t y_s
         y_stop & 0xFF,
         (y_stop >> 8) & 0x01,
     };
-    ssd1680_write(disp, SSD1360_SET_RAM_Y_ADDR, &wnd, sizeof(wnd));
+    ssd1680_write(disp, SSD1680_SET_RAM_Y_ADDR, &wnd, sizeof(wnd));
     ssd1680_wait_busy(disp);
 }
 
@@ -113,9 +113,9 @@ static void ssd1680_set_ram_pos(ssd1680_t *disp, uint16_t x_pos, uint16_t y_pos)
 {
     disp->pos_x = x_pos & 0x1F;
     disp->pos_y = y_pos & 0x1FF;
-    ssd1680_write(disp, SSD1360_SET_RAM_X_ADDR_CNT, &disp->pos_x, sizeof(uint8_t));
+    ssd1680_write(disp, SSD1680_SET_RAM_X_ADDR_CNT, &disp->pos_x, sizeof(uint8_t));
     ssd1680_wait_busy(disp);
-    ssd1680_write(disp, SSD1360_SET_RAM_Y_ADDR_CNT, &disp->pos_y, sizeof(uint16_t));
+    ssd1680_write(disp, SSD1680_SET_RAM_Y_ADDR_CNT, &disp->pos_y, sizeof(uint16_t));
     ssd1680_wait_busy(disp);
 }
 
@@ -127,14 +127,14 @@ static void ssd1680_setup_gate_driver(ssd1680_t *disp)
         .sm = 0,
         .tb = 0,
     };
-    ssd1680_write(disp, SSD1360_DRIVER_OUTPUT_CTRL, &gate, sizeof(ssd1680_gate_t));
+    ssd1680_write(disp, SSD1680_DRIVER_OUTPUT_CTRL, &gate, sizeof(ssd1680_gate_t));
     ssd1680_wait_busy(disp);
 }
 
 static void ssd1680_setup_border(ssd1680_t *disp)
 {
     uint8_t b = 0b00000101;
-    ssd1680_write(disp, SSD1360_BORDER_WAVEFORM_CTRL, &b, sizeof(uint8_t));
+    ssd1680_write(disp, SSD1680_BORDER_WAVEFORM_CTRL, &b, sizeof(uint8_t));
     ssd1680_wait_busy(disp);
 }
 
@@ -149,7 +149,7 @@ static void ssd1680_setup_booster(ssd1680_t *disp)
         (1 << 7) | (driver_strength << 4) | (min_off_time),
         0b00000101,
     };
-    ssd1680_write(disp, SSD1360_BOOSTER_SOFT_START_CTRL, &booster, sizeof(booster));
+    ssd1680_write(disp, SSD1680_BOOSTER_SOFT_START_CTRL, &booster, sizeof(booster));
     ssd1680_wait_busy(disp);
 }
 
@@ -190,7 +190,7 @@ static void ssd1680_setup_ram(ssd1680_t *disp)
         ywnd_stop = disp->rows_cnt - 1;
         break;
     }
-    ssd1680_write(disp, SSD1360_DATA_ENTRY_MODE, &b, sizeof(uint8_t));
+    ssd1680_write(disp, SSD1680_DATA_ENTRY_MODE, &b, sizeof(uint8_t));
     ssd1680_wait_busy(disp);
 
     // Set draw window
@@ -202,10 +202,10 @@ static void ssd1680_setup_ram(ssd1680_t *disp)
 
     // Setup update control
     uint8_t ctrl_1[2] = {0, 0x80};
-    ssd1680_write(disp, SSD1360_DISP_UPDATE_CTRL_1, &ctrl_1, sizeof(ctrl_1));
+    ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_1, &ctrl_1, sizeof(ctrl_1));
     ssd1680_wait_busy(disp);
     uint8_t ctrl_2 = 0xF7;
-    ssd1680_write(disp, SSD1360_DISP_UPDATE_CTRL_2, &ctrl_2, sizeof(ctrl_2));
+    ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &ctrl_2, sizeof(ctrl_2));
     ssd1680_wait_busy(disp);
 }
 
@@ -302,7 +302,7 @@ void ssd1680_deinit(ssd1680_t *disp)
 void ssd1680_sleep(ssd1680_t *disp)
 {
     uint8_t mode = 0b01;
-    ssd1680_write(disp, SSD1360_DEEP_SLEEP_MODE, &mode, 1);
+    ssd1680_write(disp, SSD1680_DEEP_SLEEP_MODE, &mode, 1);
 }
 
 void ssd1680_wakeup(ssd1680_t *disp)
@@ -386,9 +386,9 @@ void ssd1680_send_framebuffer(ssd1680_t *disp)
         ssd1680_set_ram_pos(disp, 0, 0);
         break;
     }
-    ssd1680_write(disp, SSD1360_WRITE_RAM_BW, disp->framebuffer_bw, disp->framebuffer_size);
+    ssd1680_write(disp, SSD1680_WRITE_RAM_BW, disp->framebuffer_bw, disp->framebuffer_size);
     ssd1680_wait_busy(disp);
-    ssd1680_write(disp, SSD1360_WRITE_RAM_RED, disp->framebuffer_red, disp->framebuffer_size);
+    ssd1680_write(disp, SSD1680_WRITE_RAM_RED, disp->framebuffer_red, disp->framebuffer_size);
     ssd1680_wait_busy(disp);
 }
 
@@ -418,7 +418,7 @@ void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint1
 void ssd1680_refresh(ssd1680_t *disp)
 {
     int64_t t = get_time();
-    ssd1680_write(disp, SSD1360_MASTER_ACTIVATION, NULL, 0);
+    ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
     ssd1680_wait_busy(disp);
     t = get_time() - t;
     printf("refresh time: %lld\r\n", t);
