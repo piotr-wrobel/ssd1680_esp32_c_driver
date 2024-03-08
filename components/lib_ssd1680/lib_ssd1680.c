@@ -364,14 +364,20 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
+
 						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (*area >> (8 - x1bits));
+
 					} else if ( xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
 					{
-						disp->framebuffer_bw[idx] = *area; // ?????????
+
+						disp->framebuffer_bw[idx] = (*(area - 1) << x1bits) | (*area & ~(BitsSetTable[8 - x2bits])) >> x1bits;
+
 					} else if ( xcurr == clmn_stop && x2bits > 0)
 					{
+
 						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ;
 						area++;
+
 					} else
 					{
 						if( x1bits > 0 )
