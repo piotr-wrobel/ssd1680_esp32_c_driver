@@ -215,5 +215,16 @@ void app_main(void)
 
 
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, SSD1680_NORMAL);
+    //ssd1680_sleep(ssd1680_disp);
+    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ssd1680_fill(ssd1680_disp, SSD1680_BLACK);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ssd1680_set_pixel(ssd1680_disp, 0, 0, SSD1680_BLACK);
+    ssd1680_set_pixel(ssd1680_disp, 1, 1, SSD1680_BLACK);
+    ssd1680_set_pixel(ssd1680_disp, 100, 100, SSD1680_BLACK);
+    ssd1680_set_pixel(ssd1680_disp, 101, 101, SSD1680_BLACK);
     ssd1680_sleep(ssd1680_disp);
 }
