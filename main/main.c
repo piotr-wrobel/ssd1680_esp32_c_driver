@@ -217,18 +217,20 @@ void app_main(void)
 
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, SSD1680_NORMAL);
     //ssd1680_sleep(ssd1680_disp);
-    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    ssd1680_fill(ssd1680_disp, SSD1680_BLACK);
-    ssd1680_refresh(ssd1680_disp);
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
-    ssd1680_refresh(ssd1680_disp);
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    ssd1680_set_pixel(ssd1680_disp, 0, 0, SSD1680_BLACK);
-    ssd1680_set_pixel(ssd1680_disp, 1, 1, SSD1680_BLACK);
-    ssd1680_set_pixel(ssd1680_disp, 100, 100, SSD1680_BLACK);
-    ssd1680_set_pixel(ssd1680_disp, 101, 101, SSD1680_BLACK);
+//    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
+//    vTaskDelay(1000 / portTICK_PERIOD_MS);
+//    ssd1680_fill(ssd1680_disp, SSD1680_RED);
+//    ssd1680_refresh(ssd1680_disp);
+//    vTaskDelay(1000 / portTICK_PERIOD_MS);
+//    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
+//    ssd1680_refresh(ssd1680_disp);
+//    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    ssd1680_draw_line(ssd1680_disp, 0, 0, 121, 121, SSD1680_BLACK);
+    ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
+    ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
+    ssd1680_draw_line(ssd1680_disp, 0, 122, 20, 249, SSD1680_BLACK);
+    ssd1680_draw_line(ssd1680_disp, 121, 121, 101, 249, SSD1680_BLACK);
+    ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp);
     ssd1680_sleep(ssd1680_disp);
 }

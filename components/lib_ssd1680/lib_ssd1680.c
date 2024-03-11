@@ -328,11 +328,43 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
         offset = 7 - (x % 8);
         break;
     }
-
     disp->framebuffer_bw[idx] &= ~(1 << offset);
     disp->framebuffer_bw[idx] |= (color & 0x1) << offset;
     disp->framebuffer_red[idx] &= ~(1 << offset);
     disp->framebuffer_red[idx] |= ((color >> 1) & 0x1) << offset;
+}
+
+void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, ssd1680_color_t color) //Bresenham’s Line Drawing Algorithm
+{
+	 uint8_t steep = 0;
+	    if (abs(x1-x2)<abs(y1-y2)) {
+	    	uint16_t tmp;
+	    	tmp = x1; x1 = y1; y1 = tmp; // swap x1, y1
+	    	tmp = x2; x2 = y2; y2 = tmp; // swap x2, y2
+	        steep = 1;
+	    }
+	    if (x1>x2) {
+	    	uint16_t tmp;
+	    	tmp = x1; x1 = x2; x2 = tmp; // swap x1, x2
+	    	tmp = y1; y1 = y2; y2 = tmp; //swap y1,y2
+	    }
+	    int dx = x2-x1;
+	    int dy = y2-y1;
+	    int derror2 = abs(dy)*2;
+	    int error2 = 0;
+	    int y = y1;
+	    for (int x=x1; x<=x2; x++) {
+	        if (steep) {
+	        	ssd1680_set_pixel(disp, y, x, color);
+	        } else {
+	        	ssd1680_set_pixel(disp, x, y, color);
+	        }
+	        error2 += derror2;
+	        if (error2 > dx) {
+	            y += (y2>y1?1:-1);
+	            error2 -= dx*2;
+	        }
+	    }
 }
 
 void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color)
