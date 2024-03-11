@@ -8,6 +8,7 @@
 */
 #include <string.h>
 #include "freertos/FreeRTOS.h"
+#include "freertos/timers.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 #include "esp_system.h"
@@ -59,8 +60,8 @@
 
 
 #define EPAPER_HOST    SPI2_HOST
-#define EPAPER_RES_X	250
-#define EPAPER_RES_Y	122
+#define EPAPER_RES_X	122
+#define EPAPER_RES_Y	250
 
 #define PIN_NUM_MISO 25
 #define PIN_NUM_MOSI 23
@@ -209,7 +210,7 @@ void app_main(void)
     };
 
     //Initialize the SPI bus
-    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_DISABLED);
+    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH1);
     ESP_ERROR_CHECK(ret);
 
 
@@ -219,12 +220,15 @@ void app_main(void)
     ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     ssd1680_fill(ssd1680_disp, SSD1680_BLACK);
+    ssd1680_refresh(ssd1680_disp);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
+    ssd1680_refresh(ssd1680_disp);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     ssd1680_set_pixel(ssd1680_disp, 0, 0, SSD1680_BLACK);
     ssd1680_set_pixel(ssd1680_disp, 1, 1, SSD1680_BLACK);
     ssd1680_set_pixel(ssd1680_disp, 100, 100, SSD1680_BLACK);
     ssd1680_set_pixel(ssd1680_disp, 101, 101, SSD1680_BLACK);
+    ssd1680_refresh(ssd1680_disp);
     ssd1680_sleep(ssd1680_disp);
 }
