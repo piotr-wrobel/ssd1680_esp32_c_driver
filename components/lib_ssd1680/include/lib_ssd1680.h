@@ -12,6 +12,11 @@ enum ssd1680_refresh_mode{
   FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
 };
 
+enum ssd1680_tmp_sensor_ctrl{
+	TMP_INTERNAL_SENSOR = 0x80,
+	TMP_EXTERNAL_SENSOR = 0x48
+};
+
 typedef enum {
     SSD1680_BLACK = 0b00,
     SSD1680_WHITE = 0b01,

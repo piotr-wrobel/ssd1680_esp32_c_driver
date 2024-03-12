@@ -208,12 +208,18 @@ static void ssd1680_setup_ram(ssd1680_t *disp)
     ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &ctrl_2, sizeof(ctrl_2));
     ssd1680_wait_busy(disp);
 }
+static void ssd1680_temp_sensor_ctrl(ssd1680_t *disp, uint8_t tmp_sensor)
+{
+	ssd1680_write(disp, SSD1680_TEMP_SENS_CTRL, &tmp_sensor, sizeof(uint8_t));
+	ssd1680_wait_busy(disp);
+}
 
 static void ssd1680_init_sequence(ssd1680_t *disp)
 {
     ssd1680_setup_gate_driver(disp);
     ssd1680_setup_booster(disp);
     ssd1680_setup_ram(disp);
+    ssd1680_temp_sensor_ctrl(disp, TMP_INTERNAL_SENSOR);
 }
 
 ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation)
