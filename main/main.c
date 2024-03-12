@@ -225,12 +225,16 @@ void app_main(void)
 //    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
 //    ssd1680_refresh(ssd1680_disp);
 //    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    uint8_t area[255];
+    memset(area, 0x5A, sizeof(area));
+    printf("Area size: %d\r\n", sizeof(area));
     ssd1680_draw_line(ssd1680_disp, 0, 0, 121, 121, SSD1680_BLACK);
     ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
     ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
     ssd1680_draw_line(ssd1680_disp, 0, 122, 20, 249, SSD1680_BLACK);
     ssd1680_draw_line(ssd1680_disp, 121, 121, 101, 249, SSD1680_BLACK);
+    //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
     ssd1680_send_framebuffer(ssd1680_disp);
-    ssd1680_refresh(ssd1680_disp);
+    ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
     ssd1680_sleep(ssd1680_disp);
 }

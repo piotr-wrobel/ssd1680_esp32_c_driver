@@ -5,6 +5,13 @@
 #include <driver/spi_master.h>
 #include <driver/gpio.h>
 
+enum ssd1680_refresh_mode{
+  FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
+  PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
+  FAST_FULL_REFRESH = 0xC7,	/**< Refresh whole screen in a fast way */
+  FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
+};
+
 typedef enum {
     SSD1680_BLACK = 0b00,
     SSD1680_WHITE = 0b01,
@@ -53,5 +60,5 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 void ssd1680_send_framebuffer(ssd1680_t *disp);
 
 void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-void ssd1680_refresh(ssd1680_t *disp);
+void ssd1680_refresh(ssd1680_t *disp, uint8_t mode);
 
