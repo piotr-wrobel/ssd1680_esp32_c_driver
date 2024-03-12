@@ -235,17 +235,9 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
     disp->res_x = res_x;
     disp->res_y = res_y;
 
-    switch (disp->orientation)
-    {
-    case SSD1680_90_DEG: case SSD1680_270_DEG:
-        disp->clmn_cnt = (res_y + 7) / 8;
-        disp->rows_cnt = res_x;
-        break;
-    default: // SSD1680_NORMAL || SSD1680_180_DEG
-        disp->clmn_cnt = (res_x + 7) / 8;
-        disp->rows_cnt = res_y;
-        break;
-    }
+	disp->clmn_cnt = (res_x + 7) / 8;
+	disp->rows_cnt = res_y;
+
 
     printf("clmns: %d, rows: %d\r\n", disp->clmn_cnt, disp->rows_cnt);
 

@@ -214,8 +214,8 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
 
-
-    ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, SSD1680_NORMAL);
+    uint8_t ssd1680_orientation = SSD1680_90_DEG;
+    ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
     //ssd1680_sleep(ssd1680_disp);
 //    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
 //    vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -228,11 +228,22 @@ void app_main(void)
     uint8_t area[255];
     memset(area, 0x5A, sizeof(area));
     printf("Area size: %d\r\n", sizeof(area));
-    ssd1680_draw_line(ssd1680_disp, 0, 0, 121, 121, SSD1680_BLACK);
-    ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
-    ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
-    ssd1680_draw_line(ssd1680_disp, 0, 122, 20, 249, SSD1680_BLACK);
-    ssd1680_draw_line(ssd1680_disp, 121, 121, 101, 249, SSD1680_BLACK);
+    switch (ssd1680_orientation)
+    {
+    	case SSD1680_90_DEG:
+    	case SSD1680_270_DEG:
+    	    ssd1680_draw_line(ssd1680_disp, 0, 0, 249, 61 , SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 249, 0, 0, 61, SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 0, 61, 20, 121, SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 249, 61, 229, 121, SSD1680_BLACK);
+    	break;
+    	default:
+    	    ssd1680_draw_line(ssd1680_disp, 0, 0, 121, 121, SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 121, 0, 0, 121, SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 0, 122, 20, 249, SSD1680_BLACK);
+    	    ssd1680_draw_line(ssd1680_disp, 121, 121, 101, 249, SSD1680_BLACK);
+    }
+
     //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
