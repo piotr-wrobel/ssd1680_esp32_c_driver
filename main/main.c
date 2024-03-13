@@ -214,7 +214,7 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
 
-    uint8_t ssd1680_orientation = SSD1680_90_DEG;
+    uint8_t ssd1680_orientation = SSD1680_180_DEG;
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
     //ssd1680_sleep(ssd1680_disp);
 //    ssd1680_fill(ssd1680_disp, SSD1680_WHITE);
