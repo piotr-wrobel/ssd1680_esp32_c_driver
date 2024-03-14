@@ -315,17 +315,19 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
     int idx, offset;
     if (disp->orientation == SSD1680_90_DEG)
     	y += 8 - (disp->res_x % 8);
+    if (disp->orientation == SSD1680_180_DEG)
+    	x += 8 - (disp->res_x % 8);
     switch (disp->orientation)
     {
-    case SSD1680_90_DEG: case SSD1680_270_DEG:
-        idx = (y >> 3);
-        offset = 7 - (y - (idx << 3));
-        idx = idx * disp->rows_cnt + x;
-        break;
-    default: // SSD1680_NORMAL || SSD1680_180_DEG
-        idx = (x >> 3) + y * disp->clmn_cnt;
-        offset = 7 - (x % 8);
-        break;
+		case SSD1680_90_DEG: case SSD1680_270_DEG:
+			idx = (y >> 3);
+			offset = 7 - (y - (idx << 3));
+			idx = idx * disp->rows_cnt + x;
+			break;
+		default: // SSD1680_NORMAL || SSD1680_180_DEG
+			idx = (x >> 3) + y * disp->clmn_cnt;
+			offset = 7 - (x % 8);
+			break;
     }
     disp->framebuffer_bw[idx] &= ~(1 << offset);
     disp->framebuffer_bw[idx] |= (color & 0x1) << offset;
@@ -477,8 +479,6 @@ void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)
 
 void ssd1680_send_framebuffer(ssd1680_t *disp)
 {
-    uint8_t display_shift = 8 - (disp->res_x % 8);
-
 	switch (disp->orientation)
     {
     case SSD1680_90_DEG:
@@ -486,12 +486,6 @@ void ssd1680_send_framebuffer(ssd1680_t *disp)
         break;
     case SSD1680_180_DEG:
         ssd1680_set_ram_pos(disp, disp->clmn_cnt - 1, disp->rows_cnt - 1);
-        for(int i = disp->framebuffer_size-1; i > -1; i--)
-        {
-        	disp->framebuffer_bw[i] = (disp->framebuffer_bw[i] >> display_shift) | ( 0xFF << (8 - display_shift) );
-        	if ( i > 0 )
-        		disp->framebuffer_bw[i] &= (disp->framebuffer_bw[i-1] << ( 8 - display_shift ) | ( 0xFF >> display_shift) );
-        }
         break;
     case SSD1680_270_DEG:
         ssd1680_set_ram_pos(disp, 0, disp->rows_cnt - 1);
