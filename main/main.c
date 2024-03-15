@@ -253,15 +253,17 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
 
-    uint8_t ssd1680_orientation = SSD1680_180_DEG;
+    uint8_t ssd1680_orientation = SSD1680_NORMAL;
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
-    display_demo_1(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_1(ssd1680_disp, SSD1680_BLACK);
 
-//    uint8_t area[255];
-//    memset(area, 0x5A, sizeof(area));
-//    printf("Area size: %d\r\n", sizeof(area));
-//    ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
+    uint8_t area[255];
+    memset(area, 0xA5, sizeof(area));
+    printf("Area size: %d\r\n", sizeof(area));
+    //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
+
+    ssd1680_set_area(ssd1680_disp, 13, 0, 28, 122, area, sizeof(area), SSD1680_BLACK);
 
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);

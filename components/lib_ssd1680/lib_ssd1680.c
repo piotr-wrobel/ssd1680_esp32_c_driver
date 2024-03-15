@@ -383,10 +383,10 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 //			offset = 7 - (y - (idx << 3));
 //			idx = idx * disp->rows_cnt + x;
 
-			x1bits = 8 - (uint8_t)(x1 & 0x07);
-			x2bits = (uint8_t)(x2 & 0x07);
-			clmn_start = (x1 >> 3) % 8 ;
-			clmn_stop = (x2 + 7) % 8;
+			x1bits = 8 - (x1 % 8);
+			x2bits = x2 % 8;
+			clmn_start = (x1 >> 3) / 8 ;
+			clmn_stop = (x2 + 7) / 8;
 
 			for ( ycurr = y1; ycurr <= y2; ycurr++)
 			{
@@ -425,11 +425,11 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 		default: // SSD1680_NORMAL || SSD1680_180_DEG
 			//idx = (x >> 3) + y * disp->clmn_cnt;
 			//offset = 7 - (x % 8);
-			x1bits = 8 - (uint8_t)(x1 & 0x07);
-			x2bits = (uint8_t)(x2 & 0x07);
-			clmn_start = (x1 >> 3) % 8 ;
-			clmn_stop = (x2 + 7) % 8;
-
+			x1bits = (8 - (x1 % 8)) % 8;
+			x2bits = (x2 % 8);
+			clmn_start = (x1 >> 3) + 1;
+			clmn_stop = (x2 + 7) / 8;
+			printf("x1bits: %d, x2bits: %d, clmn_start: %d, clmn_stop: %d\r\n",x1bits,x2bits,clmn_start,clmn_stop);
 			for ( ycurr = y1; ycurr <= y2; ycurr++)
 			{
 
@@ -438,15 +438,14 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
-
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (*area >> (8 - x1bits));
-
-					} else if ( xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
+						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~*area >> (8 - x1bits)); //OK!
+					} else if (xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
 					{
-
-						disp->framebuffer_bw[idx] = (*(area - 1) << x1bits) | (*area & ~(BitsSetTable[8 - x2bits])) >> x1bits;
-
-					} else if ( xcurr == clmn_stop && x2bits > 0)
+						if(clmn_stop - clmn_start > 1)
+							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | (uint8_t)~BitsSetTable[8-x2bits-x1bits]) & ~(~*(area - 1) & (uint8_t)~(BitsSetTable[8 - x1bits])) & (*area & ~(BitsSetTable[8 - x2bits])) >> x1bits; //!!!
+						else
+							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~*area << x1bits); //OK!
+					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
 
 						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ;
@@ -455,7 +454,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					} else
 					{
 						if( x1bits > 0 )
-							disp->framebuffer_bw[idx] = (*area << x1bits) | (*(area + 1) >> (8 - x1bits));
+							disp->framebuffer_bw[idx] = ~(~*area << x1bits) & (uint8_t)~((uint8_t)~*(area + 1) >> (8 - x1bits));
 						else
 							disp->framebuffer_bw[idx] = *area;
 						area++;
