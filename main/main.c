@@ -214,6 +214,25 @@ void static display_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	 ssd1680_draw_line(disp, res_x-1 - 20, 20, res_x-1 - 20, res_y-1 - 20, color);
 	 ssd1680_draw_line(disp, res_x-1 - 30, 30, res_x-1 - 30, res_y-1 - 30, color);
 }
+
+void static display_demo_2(ssd1680_t *disp, ssd1680_color_t color)
+{
+	uint16_t res_x, res_y;
+	res_x = disp->res_x;
+	res_y = disp-> res_y;
+
+	for( uint8_t x = 0; x < res_x; x += 8)
+	{
+		for(uint16_t y=0; y < res_y; y += 6)
+		{
+			if(y+2 < res_y)
+				ssd1680_draw_line(disp, x, y, x, y+2, color);
+			if( x+7 < res_x && y+4 < res_y)
+				ssd1680_draw_line(disp, x+7, y+4, x+7, y+4, color);
+		}
+	}
+}
+
 void app_main(void)
 {
 	ssd1680_t * ssd1680_disp;
@@ -257,13 +276,18 @@ void app_main(void)
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
+    display_demo_2(ssd1680_disp, SSD1680_BLACK);
 
     uint8_t area[255];
     memset(area, 0xA5, sizeof(area));
     printf("Area size: %d\r\n", sizeof(area));
     //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
 
-    ssd1680_set_area(ssd1680_disp, 13, 0, 28, 122, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, 8, 0, 29, (6*8)+2, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, (5*8)-5, 0, (7*8), 50, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, (10*8)-7, 0, (11*8)+6, 50, area, sizeof(area), SSD1680_BLACK);
+
+    ssd1680_set_area(ssd1680_disp, (8)-2, 70, (3*8)+3, 120, area, sizeof(area), SSD1680_BLACK);
 
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
