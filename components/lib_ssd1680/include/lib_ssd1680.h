@@ -1,5 +1,7 @@
 #pragma once
 
+#define DEBUG
+
 #include <stdint.h>
 
 #include <driver/spi_master.h>

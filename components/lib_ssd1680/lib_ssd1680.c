@@ -238,8 +238,9 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 	disp->clmn_cnt = (res_x + 7) / 8;
 	disp->rows_cnt = res_y;
 
-
+#ifdef DEBUG
     printf("clmns: %d, rows: %d\r\n", disp->clmn_cnt, disp->rows_cnt);
+#endif
 
     disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
 
@@ -429,7 +430,9 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 			x2bits = (x2 % 8);
 			clmn_start = x1 >> 3;
 			clmn_stop = x2 >> 3;
+#ifdef DEBUG
 			printf("x1bits: %d, x2bits: %d, clmn_start: %d, clmn_stop: %d\r\n",x1bits,x2bits,clmn_start,clmn_stop);
+#endif
 			for ( ycurr = y1; ycurr <= y2; ycurr++)
 			{
 
@@ -439,25 +442,47 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
 						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~*area >> (8 - x1bits)); //OK!
+#ifdef DEBUG
+						if(ycurr == y1) printf("Section 1\r\n");
+#endif
 					} else if (xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
 					{
 						if(clmn_stop - clmn_start > 1)
+						{
 							//disp->framebuffer_bw[idx] = 0x00;
 							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | (uint8_t)~BitsSetTableRev[x2bits]) & ((uint8_t)~((uint8_t)~*area  << x1bits) | BitsSetTableRev[x2bits]); //???
-						else
+#ifdef DEBUG
+							if(ycurr == y1) printf("Section 2.1\r\n");
+#endif
+						} else
+						{
 							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~*area << x1bits); //OK!
+#ifdef DEBUG
+							if(ycurr == y1) printf("Section 2.2\r\n");
+#endif
+						}
 					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
-
 						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ; // ???!!
 						area++;
-
+#ifdef DEBUG
+						if(ycurr == y1) printf("Section 3\r\n");
+#endif
 					} else
 					{
 						if( x1bits > 0 )
+						{
 							disp->framebuffer_bw[idx] = ~(~*area << x1bits) & (uint8_t)~((uint8_t)~*(area + 1) >> (8 - x1bits)); //OK
-						else
+#ifdef DEBUG
+							if(ycurr == y1) printf("Section 4.1\r\n");
+#endif
+						} else
+						{
 							disp->framebuffer_bw[idx] = *area; //OK
+#ifdef DEBUG
+							if(ycurr == y1) printf("Section 4.2\r\n");
+#endif
+						}
 						area++;
 					}
 				}
@@ -531,5 +556,7 @@ void ssd1680_refresh(ssd1680_t *disp, uint8_t mode)
     ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
     ssd1680_wait_busy(disp);
     t = get_time() - t;
+#ifdef DEBUG
     printf("refresh time: %lld\r\n", t);
+#endif
 }
