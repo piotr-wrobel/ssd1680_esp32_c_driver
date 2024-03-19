@@ -427,7 +427,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 			//idx = (x >> 3) + y * disp->clmn_cnt;
 			//offset = 7 - (x % 8);
 			x1bits = (8 - (x1 % 8)) % 8;
-			x2bits = (x2 % 8);
+			x2bits = (x2 % 8) + 1;
 			clmn_start = x1 >> 3;
 			clmn_stop = x2 >> 3;
 #ifdef DEBUG
@@ -438,6 +438,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 
 				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
 				{
+					// BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F }, BitsSetTableRev[8] = { 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
@@ -449,11 +450,20 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					{
 						if(clmn_stop - clmn_start > 1)
 						{
-							//disp->framebuffer_bw[idx] = 0x00;
-							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | (uint8_t)~BitsSetTableRev[x2bits]) & ((uint8_t)~((uint8_t)~*area  << x1bits) | BitsSetTableRev[x2bits]); //???
+							if( x1bits + x2bits > 8)
+							{
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((*(area-1)  << (x1bits)) | (*area >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
 #ifdef DEBUG
-							if(ycurr == y1) printf("Section 2.1\r\n");
+								if(ycurr == y1) printf("Section 2.1.1\r\n");
 #endif
+							} else
+							{
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | ((*area  << x1bits) & ~BitsSetTableRev[x2bits]);
+#ifdef DEBUG
+								if(ycurr == y1) printf("Section 2.1.2\r\n");
+#endif
+							}
+
 						} else
 						{
 							disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~*area << x1bits); //OK!
@@ -464,7 +474,6 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
 						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ; // ???!!
-						area++;
 #ifdef DEBUG
 						if(ycurr == y1) printf("Section 3\r\n");
 #endif

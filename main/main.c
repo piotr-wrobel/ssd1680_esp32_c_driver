@@ -283,11 +283,18 @@ void app_main(void)
     printf("Area size: %d\r\n", sizeof(area));
     //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
 
-    ssd1680_set_area(ssd1680_disp, 8, 0, 29, (6*8)+2, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, 8, 0, (3*8)+5, 50, area, sizeof(area), SSD1680_BLACK);
     ssd1680_set_area(ssd1680_disp, (5*8)-5, 0, (7*8), 50, area, sizeof(area), SSD1680_BLACK);
     ssd1680_set_area(ssd1680_disp, (10*8)-7, 0, (11*8)+6, 50, area, sizeof(area), SSD1680_BLACK);
 
-    ssd1680_set_area(ssd1680_disp, (8)-2, 70, (3*8)+3, 120, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, (8)-2, 60, (3*8)+3, 110, area, sizeof(area), SSD1680_BLACK);
+
+    ssd1680_set_area(ssd1680_disp, 8, 120, (2*8)+5, 170, area, sizeof(area), SSD1680_BLACK);
+    ssd1680_set_area(ssd1680_disp, (5*8)-7, 120, (5*8)+5, 170, area, sizeof(area), SSD1680_BLACK);// !!
+    ssd1680_set_area(ssd1680_disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK); //!!
+
+    ssd1680_set_area(ssd1680_disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK);
+
 
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
