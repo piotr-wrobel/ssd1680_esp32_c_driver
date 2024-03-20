@@ -513,6 +513,9 @@ void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)
 
 void ssd1680_send_framebuffer(ssd1680_t *disp)
 {
+#ifdef DEBUG
+	int64_t t = get_time();
+#endif
 	switch (disp->orientation)
     {
     case SSD1680_90_DEG:
@@ -532,6 +535,11 @@ void ssd1680_send_framebuffer(ssd1680_t *disp)
     ssd1680_wait_busy(disp);
     ssd1680_write(disp, SSD1680_WRITE_RAM_RED, disp->framebuffer_red, disp->framebuffer_size);
     ssd1680_wait_busy(disp);
+
+#ifdef DEBUG
+    t = get_time() - t;
+    printf("send framebuffer time: %lld\r\n", t);
+#endif
 }
 
 void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
@@ -541,31 +549,38 @@ void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint1
     case SSD1680_90_DEG:
         ssd1680_set_x_window(disp, y2 >> 3, y1 >> 3);
         ssd1680_set_y_window(disp, x1, x2);
+        //ssd1680_set_ram_pos(disp, y2 >> 3, x1);
         break;
     case SSD1680_180_DEG:
         ssd1680_set_x_window(disp, x2 >> 3, x1 >> 3);
         ssd1680_set_y_window(disp, y2, y1);
+        //ssd1680_set_ram_pos(disp, x2 >> 3, y2);
         break;
     case SSD1680_270_DEG:
         ssd1680_set_x_window(disp, y1 >> 3, y2 >> 3);
         ssd1680_set_y_window(disp, x2, x1);
+        //ssd1680_set_ram_pos(disp, y1 >> 3, x2);
         break;
     default: // SSD1680_NORMAL
         ssd1680_set_x_window(disp, x1 >> 3, x2 >> 3);
         ssd1680_set_y_window(disp, y1, y2);
+        //ssd1680_set_ram_pos(disp, x1 >> 3, y1);
         break;
     }
 }
 
 void ssd1680_refresh(ssd1680_t *disp, uint8_t mode)
 {
-    int64_t t = get_time();
+#ifdef DEBUG
+	int64_t t = get_time();
+#endif
     ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &mode, sizeof(mode));
     ssd1680_wait_busy(disp);
     ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
     ssd1680_wait_busy(disp);
-    t = get_time() - t;
+
 #ifdef DEBUG
+    t = get_time() - t;
     printf("refresh time: %lld\r\n", t);
 #endif
 }

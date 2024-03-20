@@ -291,12 +291,17 @@ void app_main(void)
 
     ssd1680_set_area(ssd1680_disp, 8, 120, (2*8)+5, 170, area, sizeof(area), SSD1680_BLACK);
     ssd1680_set_area(ssd1680_disp, (5*8)-7, 120, (5*8)+5, 170, area, sizeof(area), SSD1680_BLACK);// !!
-    ssd1680_set_area(ssd1680_disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK); //!!
-
-    ssd1680_set_area(ssd1680_disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK);
-
+    //ssd1680_set_area(ssd1680_disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK); //!!
 
     ssd1680_send_framebuffer(ssd1680_disp);
+    //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, ssd1680_disp->res_x-1, ssd1680_disp->res_y-1);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
+
+    ssd1680_set_area(ssd1680_disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK); //!!
+    ssd1680_set_area(ssd1680_disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK);
+
+    ssd1680_send_framebuffer(ssd1680_disp);
+    ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);
+    ssd1680_refresh(ssd1680_disp, FAST_PARTIAL_REFRESH);
     ssd1680_sleep(ssd1680_disp);
 }
