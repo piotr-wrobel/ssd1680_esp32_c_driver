@@ -32,6 +32,11 @@ typedef enum {
     SSD1680_270_DEG,
 } ssd1680_orientation_t;
 
+typedef enum {
+	SSD1680_REVERSE_FALSE,
+	SSD1680_REVERSE_TRUE
+} ssd1680_reverse_t;
+
 typedef struct {
     gpio_num_t busy;
     gpio_num_t reset;
@@ -63,7 +68,9 @@ void ssd1680_wakeup(ssd1680_t *disp);
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color);
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color);
 void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, ssd1680_color_t color); //Bresenham’s Line Drawing Algorithm
-void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color);
+void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_byte, ssd1680_reverse_t reverse_bits);
+uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t character, ssd1680_color_t color);
+void ssd1680_display_string(ssd1680_t *disp, uint16_t x, uint16_t y, char * string, ssd1680_color_t color);
 void ssd1680_send_framebuffer(ssd1680_t *disp);
 
 void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);

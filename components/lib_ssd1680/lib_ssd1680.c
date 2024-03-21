@@ -8,6 +8,9 @@
 #include <string.h>
 #include <sys/time.h>
 
+#include "terminal_9pt.h"
+#include "terminal_9pt_bold.h"
+
 static struct timeval tv_now;
 
 typedef struct
@@ -368,8 +371,20 @@ void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, u
 	        }
 	    }
 }
+static uint8_t return_byte(uint8_t * byte, ssd1680_reverse_t reverse, ssd1680_reverse_t reverse_bits)
+{
+	uint8_t tmp = *byte;
+	if(reverse_bits == SSD1680_REVERSE_TRUE)
+		tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
 
-void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color)
+
+	if(reverse == SSD1680_REVERSE_TRUE)
+		return ~tmp;
+	else
+		return tmp;
+}
+
+void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_byte, ssd1680_reverse_t reverse_bits)
 {
 
 	static const uint8_t BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F }, BitsSetTableRev[8] = { 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
@@ -398,25 +413,25 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
 
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (*area >> (8 - x1bits));
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (return_byte(area, reverse_byte, reverse_bits) >> (8 - x1bits));
 
 					} else if ( xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
 					{
 
-						disp->framebuffer_bw[idx] = (*(area - 1) << x1bits) | (*area & ~(BitsSetTable[8 - x2bits])) >> x1bits;
+						disp->framebuffer_bw[idx] = (return_byte(area - 1, reverse_byte, reverse_bits) << x1bits) | (return_byte(area, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) >> x1bits;
 
 					} else if ( xcurr == clmn_stop && x2bits > 0)
 					{
 
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ;
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ;
 						area++;
 
 					} else
 					{
 						if( x1bits > 0 )
-							disp->framebuffer_bw[idx] = (*area << x1bits) | (*(area + 1) >> (8 - x1bits));
+							disp->framebuffer_bw[idx] = (return_byte(area, reverse_byte, reverse_bits) << x1bits) | (return_byte(area + 1, reverse_byte, reverse_bits) >> (8 - x1bits));
 						else
-							disp->framebuffer_bw[idx] = *area;
+							disp->framebuffer_bw[idx] = return_byte(area, reverse_byte, reverse_bits);
 						area++;
 					}
 				}
@@ -442,7 +457,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
-						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~*area >> (8 - x1bits)); //OK!
+						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~return_byte(area, reverse_byte, reverse_bits) >> (8 - x1bits)); //OK!
 #ifdef DEBUG
 						if(ycurr == y1) printf("Section 1\r\n");
 #endif
@@ -452,13 +467,13 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						{
 							if( x1bits + x2bits > 8)
 							{
-								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((*(area-1)  << (x1bits)) | (*area >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((return_byte(area -1, reverse_byte, reverse_bits)  << (x1bits)) | (return_byte(area, reverse_byte, reverse_bits) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
 #ifdef DEBUG
 								if(ycurr == y1) printf("Section 2.1.1\r\n");
 #endif
 							} else
 							{
-								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | ((*area  << x1bits) & ~BitsSetTableRev[x2bits]);
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | ((return_byte(area, reverse_byte, reverse_bits)  << x1bits) & ~BitsSetTableRev[x2bits]);
 #ifdef DEBUG
 								if(ycurr == y1) printf("Section 2.1.2\r\n");
 #endif
@@ -468,13 +483,13 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						{
 							if( x1bits + x2bits > 8)
 							{
-								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((*(area)  << (x1bits)) | (*(area+1) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((return_byte(area, reverse_byte, reverse_bits)  << (x1bits)) | (return_byte(area + 1, reverse_byte, reverse_bits) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
 #ifdef DEBUG
 								if(ycurr == y1) printf("Section 2.2.1\r\n");
 #endif
 							}else
 							{
-								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~*area << x1bits); //OK!
+								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area, reverse_byte, reverse_bits) << x1bits); //OK!
 #ifdef DEBUG
 								if(ycurr == y1) printf("Section 2.2.2\r\n");
 #endif
@@ -482,7 +497,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						}
 					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (*area & ~(BitsSetTable[8 - x2bits])) ; // ???!!
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ; // ???!!
 #ifdef DEBUG
 						if(ycurr == y1) printf("Section 3\r\n");
 #endif
@@ -490,13 +505,13 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					{
 						if( x1bits > 0 )
 						{
-							disp->framebuffer_bw[idx] = ~(~*area << x1bits) & (uint8_t)~((uint8_t)~*(area + 1) >> (8 - x1bits)); //OK
+							disp->framebuffer_bw[idx] = ~(~return_byte(area, reverse_byte, reverse_bits) << x1bits) & (uint8_t)~((uint8_t)~return_byte(area + 1, reverse_byte, reverse_bits) >> (8 - x1bits)); //OK
 #ifdef DEBUG
 							if(ycurr == y1) printf("Section 4.1\r\n");
 #endif
 						} else
 						{
-							disp->framebuffer_bw[idx] = *area; //OK
+							disp->framebuffer_bw[idx] = return_byte(area, reverse_byte, reverse_bits); //OK
 #ifdef DEBUG
 							if(ycurr == y1) printf("Section 4.2\r\n");
 #endif
@@ -511,6 +526,98 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 //    disp->framebuffer_bw[idx] |= (color & 0x1) << offset;
 //    disp->framebuffer_red[idx] &= ~(1 << offset);
 //    disp->framebuffer_red[idx] |= ((color >> 1) & 0x1) << offset;
+}
+
+uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t character, ssd1680_color_t color)
+{
+	static uint8_t unicode_prefix;
+
+	if( character > 190)
+		unicode_prefix = character;
+
+	if (character < 190)
+	{
+		switch (character)
+		{
+			case 134:
+				character = 128;
+				break;
+			case 152:
+				character = 129;
+				break;
+			case 129:
+				character = 130;
+				break;
+			case 131:
+				character = 131;
+				break;
+			case 147:
+				character = 132;
+				break;
+			case 154:
+				character = 133;
+				break;
+			case 187:
+				character = 134;
+				break;
+			case 133:
+				character = 135;
+				break;
+			case 135:
+				character = 136;
+				break;
+			case 153:
+				character = 137;
+				break;
+			case 130:
+				character = 138;
+				break;
+			case 132:
+				if(unicode_prefix == 196)
+					character = 127;
+				else
+					character = 139;
+				break;
+			case 179:
+				character = 140;
+				break;
+			case 155:
+				character = 141;
+				break;
+			case 188:
+				character = 142;
+				break;
+			case 186:
+				character = 143;
+				break;
+		}
+
+		ssd1680_set_area(	disp, x, y,
+							 x + font_terminal_9pt.x_size -1,
+							 y + font_terminal_9pt.y_size -1,
+							 &font_terminal_9pt.data[(character - ' ') * font_terminal_9pt.bytes_per_char],
+							 font_terminal_9pt.bytes_per_char,
+							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
+						 );
+		return x+8;
+	}
+	return x;
+}
+
+void ssd1680_display_string(ssd1680_t *disp, uint16_t x, uint16_t y, char * string, ssd1680_color_t color)
+{
+	uint16_t curr_x = x, next_x;
+	while(*string)
+	{
+		if (curr_x > disp->res_x - 5)
+		{
+			curr_x = x;
+			y += 13;
+		}
+		curr_x = ssd1680_display_char(disp, curr_x, y, *string, color);
+		printf("display: %c -> %d\r\n", *string, *string);
+		string++;
+	}
 }
 
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)
