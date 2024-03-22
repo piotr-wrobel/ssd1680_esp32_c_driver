@@ -8,9 +8,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "terminal_9pt.h"
-#include "terminal_9pt_bold.h"
-
 static struct timeval tv_now;
 
 typedef struct
@@ -528,7 +525,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 //    disp->framebuffer_red[idx] |= ((color >> 1) & 0x1) << offset;
 }
 
-uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t character, ssd1680_color_t color)
+uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x, uint16_t y, uint8_t character, ssd1680_color_t color)
 {
 	static uint8_t unicode_prefix;
 
@@ -558,6 +555,7 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t c
 				character = 133;
 				break;
 			case 187:
+			case 185:
 				character = 134;
 				break;
 			case 133:
@@ -593,10 +591,10 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t c
 		}
 
 		ssd1680_set_area(	disp, x, y,
-							 x + font_terminal_9pt.x_size -1,
-							 y + font_terminal_9pt.y_size -1,
-							 &font_terminal_9pt.data[(character - ' ') * font_terminal_9pt.bytes_per_char],
-							 font_terminal_9pt.bytes_per_char,
+							 x + font->x_size -1,
+							 y + font->y_size -1,
+							 font->data + ((character - ' ') * font->bytes_per_char),
+							 font->bytes_per_char,
 							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
 						 );
 		return x+8;
@@ -604,20 +602,23 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t c
 	return x;
 }
 
-void ssd1680_display_string(ssd1680_t *disp, uint16_t x, uint16_t y, char * string, ssd1680_color_t color)
+ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x, uint16_t y, char * string, ssd1680_color_t color)
 {
-	uint16_t curr_x = x, next_x;
+	ssd1680_cursor_t cursor;
+	cursor.x = x;
+	cursor.y = y;
 	while(*string)
 	{
-		if (curr_x > disp->res_x - 5)
+		if (cursor.x > disp->res_x - 5)
 		{
-			curr_x = x;
-			y += 13;
+			cursor.x = 0;
+			cursor.y += 13;
 		}
-		curr_x = ssd1680_display_char(disp, curr_x, y, *string, color);
+		cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, *string, color);
 		printf("display: %c -> %d\r\n", *string, *string);
 		string++;
 	}
+	return cursor;
 }
 
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color)

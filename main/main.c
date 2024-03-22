@@ -21,6 +21,7 @@
 #include "lwip/sys.h"
 
 #include "lib_ssd1680.h"
+#include "ssd1680_fonts.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -302,8 +303,12 @@ void app_main(void)
 //    ssd1680_display_char(ssd1680_disp, 16, 0, 's', SSD1680_BLACK);
 //    ssd1680_display_char(ssd1680_disp, 24, 0, 't', SSD1680_BLACK);
 //    ssd1680_display_char(ssd1680_disp, 32, 0, '!', SSD1680_BLACK);
+    ssd1680_cursor_t ssd1680_cursor;
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, ssd1680_cursor.x, ssd1680_cursor.y, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
 
-    ssd1680_display_string(ssd1680_disp, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
+
+    //ssd1680_display_string(ssd1680_disp, 0, 0, "ĄĆĘŁŃÓŚŻŹąćęłńóśżź", SSD1680_BLACK);
 
 
     ssd1680_send_framebuffer(ssd1680_disp);

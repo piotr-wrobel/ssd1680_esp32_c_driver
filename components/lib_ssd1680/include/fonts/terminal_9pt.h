@@ -144,7 +144,4 @@ struct {
 				}
 		};
 
-
-
-
 #endif /* COMPONENTS_FONTS_TERMINAL_9PT_H_ */
