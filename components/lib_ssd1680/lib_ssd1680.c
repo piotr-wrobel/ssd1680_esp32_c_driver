@@ -371,9 +371,9 @@ void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, u
 static uint8_t return_byte(uint8_t * byte, ssd1680_reverse_t reverse, ssd1680_reverse_t reverse_bits)
 {
 	uint8_t tmp = *byte;
+
 	if(reverse_bits == SSD1680_REVERSE_TRUE)
 		tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-
 
 	if(reverse == SSD1680_REVERSE_TRUE)
 		return ~tmp;
@@ -593,11 +593,11 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x
 		ssd1680_set_area(	disp, x, y,
 							 x + font->x_size -1,
 							 y + font->y_size -1,
-							 font->data + ((character - ' ') * font->bytes_per_char),
+							 (uint8_t *)font->data + ((character - ' ') * font->bytes_per_char),
 							 font->bytes_per_char,
 							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
 						 );
-		return x+8;
+		return x + font->x_size; //return x + 8; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
 	}
 	return x;
 }
@@ -612,7 +612,7 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 		if (cursor.x > disp->res_x - 5)
 		{
 			cursor.x = 0;
-			cursor.y += 13;
+			cursor.y += font->y_size;
 		}
 		cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, *string, color);
 		printf("display: %c -> %d\r\n", *string, *string);
