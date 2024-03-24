@@ -235,6 +235,26 @@ void static display_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 	}
 }
 
+void static display_demo_3(ssd1680_t *disp, ssd1680_color_t color)
+{
+    uint8_t area[255];
+    memset(area, 0xA5, sizeof(area));
+    printf("Area size: %d\r\n", sizeof(area));
+    ssd1680_set_area(disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+
+    ssd1680_set_area(disp, 8, 0, (3*8)+5, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (5*8)-5, 0, (7*8), 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (10*8)-7, 0, (11*8)+6, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+
+    ssd1680_set_area(disp, (8)-2, 60, (3*8)+3, 110, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+
+    ssd1680_set_area(disp, 8, 120, (2*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (5*8)-7, 120, (5*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);// !!
+    ssd1680_set_area(disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE); //!!
+
+    ssd1680_set_area(disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+}
+
 void app_main(void)
 {
 	ssd1680_t * ssd1680_disp;
@@ -279,37 +299,12 @@ void app_main(void)
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_3(ssd1680_disp, SSD1680_BLACK);
 
-    uint8_t area[255];
-    memset(area, 0xA5, sizeof(area));
-    printf("Area size: %d\r\n", sizeof(area));
-    //ssd1680_set_area(ssd1680_disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK);
-
-//    ssd1680_set_area(ssd1680_disp, 8, 0, (3*8)+5, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-//    ssd1680_set_area(ssd1680_disp, (5*8)-5, 0, (7*8), 50, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-//    ssd1680_set_area(ssd1680_disp, (10*8)-7, 0, (11*8)+6, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-//
-//    ssd1680_set_area(ssd1680_disp, (8)-2, 60, (3*8)+3, 110, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-//
-//    ssd1680_set_area(ssd1680_disp, 8, 120, (2*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-//    ssd1680_set_area(ssd1680_disp, (5*8)-7, 120, (5*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);// !!
-//    ssd1680_set_area(ssd1680_disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA); //!!
-
-//    ssd1680_set_area(ssd1680_disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK, SSD1680_NORMAL_DATA);
-
-    //ssd1680_set_area(ssd1680_disp, (5*8), 180, (5*8)+font_terminal_9pt.x_size, 180 + font_terminal_9pt.y_size, &font_terminal_9pt.data[('A'-' ')*font_terminal_9pt.bytes_per_char], font_terminal_9pt.bytes_per_char, SSD1680_BLACK, SSD1680_REVERSE_DATA);
-//    ssd1680_display_char(ssd1680_disp, 0, 0, 'T', SSD1680_BLACK);
-//    ssd1680_display_char(ssd1680_disp, 8, 0, 'e', SSD1680_BLACK);
-//    ssd1680_display_char(ssd1680_disp, 16, 0, 's', SSD1680_BLACK);
-//    ssd1680_display_char(ssd1680_disp, 24, 0, 't', SSD1680_BLACK);
-//    ssd1680_display_char(ssd1680_disp, 32, 0, '!', SSD1680_BLACK);
     ssd1680_cursor_t ssd1680_cursor;
     ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
-    //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, ssd1680_cursor.x, ssd1680_cursor.y, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
-
-
-    //ssd1680_display_string(ssd1680_disp, 0, 0, "ĄĆĘŁŃÓŚŻŹąćęłńóśżź", SSD1680_BLACK);
-
+    //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
+    //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x, ssd1680_cursor.y, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
 
     ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, ssd1680_disp->res_x-1, ssd1680_disp->res_y-1);

@@ -597,7 +597,8 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x
 							 font->bytes_per_char,
 							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
 						 );
-		return x + font->x_size; //return x + 8; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
+		return x + font->x_size; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
+		//return x + 8;
 	}
 	return x;
 }
