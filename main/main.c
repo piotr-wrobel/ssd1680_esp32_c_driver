@@ -302,7 +302,12 @@ void app_main(void)
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
 
     ssd1680_cursor_t ssd1680_cursor;
-    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
+    char test_string[] = "ABCDEF";
+    //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, test_string, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, ssd1680_cursor.x, ssd1680_cursor.y, test_string, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x, ssd1680_cursor.y, test_string, SSD1680_BLACK);
+
     //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
     //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x, ssd1680_cursor.y, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
 

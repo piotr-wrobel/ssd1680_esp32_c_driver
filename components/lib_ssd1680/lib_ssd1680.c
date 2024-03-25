@@ -456,8 +456,9 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					{
 						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~return_byte(area, reverse_byte, reverse_bits) >> (8 - x1bits)); //OK!
 #ifdef DEBUG
-						if(ycurr == y1) printf("Section 1\r\n");
+						if(ycurr <  y1+4) printf("Section 1\r\n");
 #endif
+						area++;
 					} else if (xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
 					{
 						if(clmn_stop - clmn_start > 1)
@@ -466,13 +467,13 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 							{
 								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((return_byte(area -1, reverse_byte, reverse_bits)  << (x1bits)) | (return_byte(area, reverse_byte, reverse_bits) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
 #ifdef DEBUG
-								if(ycurr == y1) printf("Section 2.1.1\r\n");
+								if(ycurr <  y1+4) printf("Section 2.1.1\r\n");
 #endif
 							} else
 							{
 								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | ((return_byte(area, reverse_byte, reverse_bits)  << x1bits) & ~BitsSetTableRev[x2bits]);
 #ifdef DEBUG
-								if(ycurr == y1) printf("Section 2.1.2\r\n");
+								if(ycurr <  y1+4) printf("Section 2.1.2\r\n");
 #endif
 							}
 
@@ -480,37 +481,39 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						{
 							if( x1bits + x2bits > 8)
 							{
-								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((return_byte(area, reverse_byte, reverse_bits)  << (x1bits)) | (return_byte(area + 1, reverse_byte, reverse_bits) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
+								disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (((return_byte(area - 1, reverse_byte, reverse_bits)  << (x1bits)) | (return_byte(area, reverse_byte, reverse_bits) >> (8-x1bits))) & ~BitsSetTableRev[x2bits]) ;
 #ifdef DEBUG
-								if(ycurr == y1) printf("Section 2.2.1\r\n");
+								if(ycurr <  y1+4) printf("Section 2.2.1\r\n");
 #endif
 							}else
 							{
-								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area, reverse_byte, reverse_bits) << x1bits); //OK!
+								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area - 1, reverse_byte, reverse_bits) << x1bits); //OK!
 #ifdef DEBUG
-								if(ycurr == y1) printf("Section 2.2.2\r\n");
+								if(ycurr <  y1+4) printf("Section 2.2.2\r\n");
 #endif
 							}
 						}
+						area++;
 					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ; // ???!!
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area - 1, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ; // ???!!
 #ifdef DEBUG
-						if(ycurr == y1) printf("Section 3\r\n");
+						if(ycurr <  y1+4) printf("Section 3\r\n");
 #endif
+						area++;
 					} else
 					{
 						if( x1bits > 0 )
 						{
-							disp->framebuffer_bw[idx] = ~(~return_byte(area, reverse_byte, reverse_bits) << x1bits) & (uint8_t)~((uint8_t)~return_byte(area + 1, reverse_byte, reverse_bits) >> (8 - x1bits)); //OK
+							disp->framebuffer_bw[idx] = ~(~return_byte(area - 1, reverse_byte, reverse_bits) << x1bits) & (uint8_t)~((uint8_t)~return_byte(area, reverse_byte, reverse_bits) >> (8 - x1bits)); //OK
 #ifdef DEBUG
-							if(ycurr == y1) printf("Section 4.1\r\n");
+							if(ycurr <  y1+4) printf("Section 4.1\r\n");
 #endif
 						} else
 						{
 							disp->framebuffer_bw[idx] = return_byte(area, reverse_byte, reverse_bits); //OK
 #ifdef DEBUG
-							if(ycurr == y1) printf("Section 4.2\r\n");
+							if(ycurr <  y1+4) printf("Section 4.2\r\n");
 #endif
 						}
 						area++;
@@ -595,10 +598,12 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x
 							 y + font->y_size -1,
 							 (uint8_t *)font->data + ((character - ' ') * font->bytes_per_char),
 							 font->bytes_per_char,
-							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
+							 SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE
 						 );
-		return x + font->x_size; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
-		//return x + 8;
+		if( font->x_size < 8)
+			return x + 8; // tmp !!
+		else
+			return x + font->x_size; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
 	}
 	return x;
 }
