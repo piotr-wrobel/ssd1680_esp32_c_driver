@@ -496,7 +496,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						area++;
 					} else if ( clmn_start != clmn_stop && xcurr == clmn_stop && x2bits > 0)
 					{
-						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area - 1, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ; // ???!!
+						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area, reverse_byte, reverse_bits) & ~(BitsSetTable[8 - x2bits])) ; // ???!!
 #ifdef DEBUG
 						if(ycurr <  y1+4) printf("Section 3\r\n");
 #endif
