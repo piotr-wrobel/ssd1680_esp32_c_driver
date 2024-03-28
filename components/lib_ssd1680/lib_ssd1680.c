@@ -487,7 +487,8 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #endif
 							}else
 							{
-								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area - 1, reverse_byte, reverse_bits) << x1bits); //OK!
+								//disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area - 1, reverse_byte, reverse_bits) << x1bits); //OK!
+								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] & BitsSetTableRev[x2bits]) | (return_byte(area - 1, reverse_byte, reverse_bits) << x1bits); //OK!
 #ifdef DEBUG
 								if(ycurr <  y1+4) printf("Section 2.2.2\r\n");
 #endif
@@ -621,7 +622,7 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 			cursor.y += font->y_size;
 		}
 		cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, *string, color);
-		printf("display: %c -> %d\r\n", *string, *string);
+		printf("display: %c -> %d\r\n--------\r\n", *string, *string);
 		string++;
 	}
 	return cursor;
