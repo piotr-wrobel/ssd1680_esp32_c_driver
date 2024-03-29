@@ -302,11 +302,24 @@ void app_main(void)
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
 
     ssd1680_cursor_t ssd1680_cursor;
-    char test_str_high[] = "ABCD";
-    char test_str_low[] = "abcdef";
+    char test_str_high[] = "ABCDEF";
+    char test_str_low[] = "ghijk";
     //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
     ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, test_str_high, SSD1680_BLACK);
-    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, ssd1680_cursor.x + 1, ssd1680_cursor.y, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 30, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 1, 50, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 2, 70, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 3, 90, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 4, 110, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 5, 130, test_str_low, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
+    ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 6, 150, test_str_low, SSD1680_BLACK);
     ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
 
     //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);

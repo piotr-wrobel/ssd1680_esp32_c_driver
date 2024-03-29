@@ -37,6 +37,15 @@ typedef enum {
 	SSD1680_REVERSE_TRUE
 } ssd1680_reverse_t;
 
+typedef enum {
+	SSD1680_ORDER_123,
+	SSD1680_ORDER_132,
+	SSD1680_ORDER_213,
+	SSD1680_ORDER_231,
+	SSD1680_ORDER_312,
+	SSD1680_ORDER_321
+} ssd1680_order_t;
+
 typedef struct {
     gpio_num_t busy;
     gpio_num_t reset;
