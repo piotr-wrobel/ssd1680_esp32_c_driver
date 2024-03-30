@@ -524,11 +524,11 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
 						//disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[x1bits]) & (uint8_t)~((uint8_t)~return_byte(area, reverse_bits_values, reverse_bits_order) >> (8 - x1bits)); //OK!
-						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] & BitsSetTableRev[x1bits]) | modify_byte(area, reverse_bits_values, reverse_bits_order, (8 - x1bits), SSD1680_ORDER_231);
+						disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] & BitsSetTableRev[x1bits]) | (modify_byte(area, reverse_bits_values, reverse_bits_order, (8 - x1bits), SSD1680_ORDER_231) & BitsSetTable[x1bits]);
 #ifdef DEBUG
 						if(ycurr < y1 +5)
 						{
-							printf("x1: %d, byte: %d, modify byte: %d\r\n", x1bits, *(area), modify_byte(area, reverse_bits_values, reverse_bits_order, 8 - x1bits, SSD1680_ORDER_231)); //OK!)
+							printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *(area), modify_byte(area, reverse_bits_values, reverse_bits_order, 8 - x1bits, SSD1680_ORDER_231)); //OK!)
 							printf("Section 1\r\n");
 						}
 #endif
@@ -564,12 +564,14 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #endif
 							}else
 							{
+								// BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F }, BitsSetTableRev[8] = { 0xFF, 0xFE, 0xFC, 0xF8, 0xF0, 0xE0, 0xC0, 0x80 };
 								//disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] | BitsSetTable[8 - x1bits]) & ~(~return_byte(area - 1, reverse_bits_values, reverse_bits_order) << x1bits); //OK!
-								disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits]) | (modify_byte(area - 1, reverse_bits_values, reverse_bits_order, - (int8_t)x1bits, SSD1680_ORDER_123)); //OK!
+								//disp->framebuffer_bw[idx] = (disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits]) | (modify_byte(area - 1, reverse_bits_values, reverse_bits_order, - (int8_t)x1bits, SSD1680_ORDER_231) & BitsSetTableRev[8-x2bits]); //OK!
+								disp->framebuffer_bw[idx] = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, - (int8_t)x1bits, SSD1680_ORDER_231); //OK!
 #ifdef DEBUG
 								if(ycurr < y1 +5)
 									{
-										printf("x1: %d, byte: %d, modify byte: %d\r\n", x1bits, *(area-1), modify_byte(area - 1, reverse_bits_values, reverse_bits_order, - (int8_t)x1bits, SSD1680_ORDER_231)); //OK!)
+										printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *(area-1), modify_byte(area - 1, reverse_bits_values, reverse_bits_order, - (int8_t)x1bits, SSD1680_ORDER_231)); //OK!)
 										printf("Section 2.2.2\r\n");
 									}
 #endif

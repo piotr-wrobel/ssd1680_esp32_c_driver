@@ -303,7 +303,7 @@ void app_main(void)
 
     ssd1680_cursor_t ssd1680_cursor;
     char test_str_high[] = "ABCDEF";
-    char test_str_low[] = "ghijk";
+    char test_str_low[] = "ghijklmn";
     //ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, "Test!:) Zobaczmy czy sie bedzie wyswietlac nizej ĄĆĘŁŃÓŚŻŹąćęłńóśżź Grzegżółka sączyła ćmi sok z źbła :)", SSD1680_BLACK);
     ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_14pt, 0, 0, test_str_high, SSD1680_BLACK);
     ssd1680_cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, ssd1680_cursor.x +1 , ssd1680_cursor.y, test_str_high, SSD1680_BLACK);
