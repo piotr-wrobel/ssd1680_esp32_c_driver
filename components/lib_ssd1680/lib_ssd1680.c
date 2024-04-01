@@ -381,89 +381,36 @@ static uint8_t return_byte(uint8_t * byte, ssd1680_reverse_t reverse_bits_values
 		return tmp;
 }
 
-static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t reverse_bits_values, ssd1680_reverse_t reverse_bits_order, int8_t shift, ssd1680_order_t modify_order)
+static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t rbv_condition, ssd1680_reverse_t rbo_condition, int8_t shift_value, ssd1680_order_t modify_order)
 {
 	uint8_t tmp = *byte;
-	switch(modify_order)
+	for(uint8_t i = 1;  i < 4; i++)
 	{
-		case SSD1680_ORDER_123:
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-		[[fallthrough]];
-		case SSD1680_ORDER_23:
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-		[[fallthrough]];
-		case SSD1680_ORDER_3:
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-			break;
-		case SSD1680_ORDER_132:
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-		[[fallthrough]];
-		case SSD1680_ORDER_32:
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-		[[fallthrough]];
-		case SSD1680_ORDER_2:
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-			break;
-		case SSD1680_ORDER_213:
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-		[[fallthrough]];
-		case SSD1680_ORDER_13:
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-			break;
-		case SSD1680_ORDER_231:
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-		[[fallthrough]];
-		case SSD1680_ORDER_31:
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-		[[fallthrough]];
-		case SSD1680_ORDER_1:
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-			break;
-		case SSD1680_ORDER_312:
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-		[[fallthrough]];
-		case SSD1680_ORDER_12:
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-			break;
-		case SSD1680_ORDER_321:
-			if(shift > 0 && shift < 8)
-				tmp = (tmp >> shift);
-			else if (shift < 0 && shift > -8)
-				tmp = (tmp << abs(shift));
-		[[fallthrough]];
-		case SSD1680_ORDER_21:
-			if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-				tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-			if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-				tmp = ~tmp;
-			break;
+		uint8_t order = modify_order;
+		for(uint8_t j = 1; j < 4; j++)
+		{
+			if((order && 0x03) == i)
+			{
+				switch(j)
+				{
+					case 0x01:
+						if(rbv_condition == SSD1680_REVERSE_TRUE)
+							tmp = ~tmp;
+					break;
+					case 0x02:
+						if(rbo_condition == SSD1680_REVERSE_TRUE)
+							tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
+					break;
+					case 0x03:
+						if(shift_value > 0 && shift_value < 8)
+							tmp = (tmp >> shift_value);
+						else if (shift_value < 0 && shift_value > -8)
+							tmp = (tmp << abs(shift_value));
+					break;
+				}
+			}
+			order = order >> 2;
+		}
 	}
 	return tmp;
 }
@@ -763,10 +710,7 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x
 							 font->bytes_per_char,
 							 SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE
 						 );
-		if( font->x_size < 8)
-			return x + 8; // tmp !!
-		else
-			return x + font->x_size; //Tu do zmiany na font->x_size i poprawa wyświetlania czcionek węższych niż 8 punktów
+			return x + font->x_size;
 	}
 	return x;
 }
