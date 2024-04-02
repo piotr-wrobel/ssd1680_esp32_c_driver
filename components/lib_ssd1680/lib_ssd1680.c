@@ -480,7 +480,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 
 			for ( ycurr = y1; ycurr <= y2; ycurr++)
 			{
-				uint16_t y1_cond = y1 + 2;
+				uint16_t y1_cond = y1 + 5;
 				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
 				{
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
@@ -497,7 +497,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #ifdef DEBUG
 						if(ycurr < y1_cond)
 						{
-							printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *(area),mb);
+							printf("idx: %X x1: %X, bytea: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, (uint)area, *(area),mb);
 							printf("Section 1\r\n");
 						}
 #endif
@@ -517,14 +517,15 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 											mb
 											& BitsSetTableRev[8 - x2bits]
 										);
-								area++;
+
 #ifdef DEBUG
 								if(ycurr < y1_cond)
 								{
-									printf("idx: %X x1: %X, byte: %X, byte2: %X, modify byte: %X\r\n", idx, x1bits, *(area-1), *area, mb);
+									printf("idx: %X x1: %X, bytea: %X, byte: %X, byte2a: %X, byte2: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area-1), *(area-1), (uint)area, *area, mb);
 									printf("Section 2.1.1\r\n");
 								}
 #endif
+								area++;
 							} else
 							{
 								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -x1bits, SSD1680_ORDER_231);
@@ -535,14 +536,15 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 											mb
 											& BitsSetTableRev[8 - x2bits]
 										);
-								area++;
+
 #ifdef DEBUG
 								if(ycurr < y1_cond)
 								{
-									printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *area, mb); //OK!)
+									printf("idx: %X x1: %X, bytea: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area-1), *(area -1), mb);
 									printf("Section 2.1.2\r\n");
 								}
 #endif
+								//area++;
 							}
 
 						} else
@@ -558,14 +560,15 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 											mb
 											& BitsSetTableRev[8 - x2bits]
 										);
-								area++;
+
 #ifdef DEBUG
 								if(ycurr < y1_cond)
 								{
-									printf("idx: %X x1: %X, byte: %X, byte2: %X, modify byte: %X\r\n", idx, x1bits, *(area-1), *area, mb);
+									printf("idx: %X x1: %X, bytea: %X, byte: %X, byte2a: %X, byte2: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area-1), *(area-1), (uint)area, *area, mb);
 									printf("Section 2.2.1\r\n");
 								}
 #endif
+								area++;
 							}else
 							{
 								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -x1bits, SSD1680_ORDER_231);
@@ -579,7 +582,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #ifdef DEBUG
 								if(ycurr < y1_cond)
 									{
-										printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *(area-1), mb);
+										printf("idx: %X x1: %X, bytea: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area-1), *(area -1), mb);
 										printf("Section 2.2.2\r\n");
 									}
 #endif
@@ -598,7 +601,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #ifdef DEBUG
 						if(ycurr < y1_cond)
 						{
-							printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *area, mb);
+							printf("idx: %X x1: %X, bytea: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area), *(area), mb);
 							printf("Section 3\r\n");
 						}
 #endif
@@ -614,7 +617,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #ifdef DEBUG
 							if(ycurr < y1_cond)
 							{
-								printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *area, mb);
+								printf("idx: %X x1: %X, bytea: %X, byte: %X, byte2a: %X, byte2: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area-1), *(area-1), (uint)area, *area, mb);
 								printf("Section 4.1\r\n");
 							}
 #endif
@@ -625,7 +628,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 #ifdef DEBUG
 							if(ycurr < y1_cond)
 							{
-								printf("idx: %X x1: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, *area, mb);
+								printf("idx: %X x1: %X, bytea: %X, byte: %X, modify byte: %X\r\n", idx, x1bits, (uint)(area), *(area), mb);
 								printf("Section 4.2\r\n");
 							}
 #endif
@@ -722,7 +725,7 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 	cursor.y = y;
 	while(*string)
 	{
-		if (cursor.x > disp->res_x - 5)
+		if (cursor.x > disp->res_x - font->x_size)
 		{
 			cursor.x = 0;
 			cursor.y += font->y_size;
