@@ -12,5 +12,6 @@
 #include "terminal_9pt_bold.h"
 #include "terminal_14pt.h"
 #include "consolas_16pt_bold.h"
+#include "consolas_22pt.h"
 
 #endif /* COMPONENTS_LIB_SSD1680_INCLUDE_FONTS_SSD1680_FONTS_H_ */
