@@ -480,7 +480,9 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 
 			for ( ycurr = y1; ycurr <= y2; ycurr++)
 			{
+#ifdef DEBUG
 				uint16_t y1_cond = y1 + 5;
+#endif
 				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
 				{
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
