@@ -259,6 +259,12 @@ void static display_demo_3(ssd1680_t *disp, ssd1680_color_t color)
 
 void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
+	uint8_t allowed_characters[] = {'1','2','3','4','5','6','7','8','9','0','Q','W','E','R','T','Y','U','I',
+									'O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M',
+									'q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k',
+									'l','z','x','c','v','b','n','m','&','*','#','@','?',',','!',127,128,129,
+									130,131,132,133,134,135,136,137,138,139,140,141,142,143,144
+									};
 	uint32_t random_number;
 	ssd1680_cursor_t cursor;
 	ssd1680_font_t * font;
@@ -309,16 +315,8 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 			{
 
 				random_number = esp_random();
-				uint8_t hl = (uint8_t)(random_number & 0x01);
-				random_number = random_number >> 1;
-				uint8_t character = (uint8_t)((random_number & 0xFF) % 25);
-
-				if(hl)
-					character += 65;
-				else
-					character += 97;
-
-				cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, character, SSD1680_BLACK);
+				uint8_t character = (uint8_t)((random_number & 0xFF) % sizeof(allowed_characters));
+				cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, allowed_characters[character], SSD1680_BLACK);
 			}
 			cursor.x = 0 ;
 			cursor.y += font->y_size;
@@ -380,10 +378,7 @@ void app_main(void)
 
 
     //ssd1680_send_framebuffer(ssd1680_disp);
-    //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, ssd1680_disp->res_x-1, ssd1680_disp->res_y-1);
     //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
-
-
 
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);

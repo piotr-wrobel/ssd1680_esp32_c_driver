@@ -673,38 +673,40 @@ uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x
 				character = 133;
 				break;
 			case 187:
-			case 185:
 				character = 134;
 				break;
-			case 133:
+			case 185:
 				character = 135;
 				break;
-			case 135:
+			case 133:
 				character = 136;
 				break;
-			case 153:
+			case 135:
 				character = 137;
 				break;
-			case 130:
+			case 153:
 				character = 138;
+				break;
+			case 130:
+				character = 139;
 				break;
 			case 132:
 				if(unicode_prefix == 196)
 					character = 127;
 				else
-					character = 139;
+					character = 140;
 				break;
 			case 179:
-				character = 140;
-				break;
-			case 155:
 				character = 141;
 				break;
-			case 188:
+			case 155:
 				character = 142;
 				break;
-			case 186:
+			case 188:
 				character = 143;
+				break;
+			case 186:
+				character = 144;
 				break;
 		}
 
