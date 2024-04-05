@@ -321,12 +321,11 @@ void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t 
     switch (disp->orientation)
     {
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
-			idx = (y >> 3);
-			offset = 7 - (y - (idx << 3));
-			idx = idx * disp->rows_cnt + x;
+			idx = x + ((y >> 3) * disp->rows_cnt);
+			offset = 7 - (y % 8);
 			break;
 		default: // SSD1680_NORMAL || SSD1680_180_DEG
-			idx = (x >> 3) + y * disp->clmn_cnt;
+			idx = (x >> 3) + (y * disp->clmn_cnt);
 			offset = 7 - (x % 8);
 			break;
     }
@@ -426,10 +425,6 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 	switch (disp->orientation)
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
-//			idx = (y >> 3);
-//			offset = 7 - (y - (idx << 3));
-//			idx = idx * disp->rows_cnt + x;
-
 			x1bits = 8 - (x1 % 8);
 			x2bits = x2 % 8;
 			clmn_start = (x1 >> 3) / 8 ;
