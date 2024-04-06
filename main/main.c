@@ -222,8 +222,15 @@ void static display_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 void static display_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 {
 	uint16_t res_x, res_y;
-	res_x = disp->res_x;
-	res_y = disp-> res_y;
+//	if (disp->orientation == SSD1680_270_DEG || disp->orientation == SSD1680_90_DEG)
+//	{
+//		res_x = disp->res_y;
+//		res_y = disp->res_x;
+//	}else
+//	{
+		res_x = disp->res_x;
+		res_y = disp-> res_y;
+//	}
 
 	for( uint8_t x = 0; x < res_x; x += 8)
 	{
@@ -242,19 +249,30 @@ void static display_demo_3(ssd1680_t *disp, ssd1680_color_t color)
     uint8_t area[255];
     memset(area, 0xA5, sizeof(area));
     printf("Area size: %d\r\n", sizeof(area));
-    ssd1680_set_area(disp, 57, 0, 64, 254, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (7*8)+1, 0, (8*8), 110, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
 
-    ssd1680_set_area(disp, 8, 0, (3*8)+5, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
-    ssd1680_set_area(disp, (5*8)-5, 0, (7*8), 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
-    ssd1680_set_area(disp, (10*8)-7, 0, (11*8)+6, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, 8, 0, (3*8)+5, 20, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (5*8)-5, 0, (7*8), 20, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (10*8)-7, 0, (11*8)+6, 20, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
 
-    ssd1680_set_area(disp, (8)-2, 60, (3*8)+3, 110, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (8)-2, 30, (3*8)+3, 50, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
 
-    ssd1680_set_area(disp, 8, 120, (2*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
-    ssd1680_set_area(disp, (5*8)-7, 120, (5*8)+5, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);// !!
-    ssd1680_set_area(disp, (9*8)-5, 120, (9*8)+7, 170, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE); //!!
+    ssd1680_set_area(disp, 8, 60, (2*8)+5, 80, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (5*8)-7, 60, (5*8)+5, 80, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (9*8)-5, 60, (9*8)+7, 80, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
 
-    ssd1680_set_area(disp, (8)-2, 180, (2*8)+2, 230, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+    ssd1680_set_area(disp, (8)-2, 90, (2*8)+2, 110, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+
+
+}
+
+void static display_demo_4(ssd1680_t *disp, ssd1680_color_t color)
+{
+	uint8_t values[] = {0x3D, 0x35, 0x2D, 0x25};
+	ssd1680_fill(disp, SSD1680_WHITE);
+	for(uint8_t i = 0; i < sizeof(values); i++)
+		disp->framebuffer_bw[i+250] = values[i];
+
 }
 
 void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
@@ -367,18 +385,20 @@ void app_main(void)
     ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH1);
     ESP_ERROR_CHECK(ret);
 
-
-    uint8_t ssd1680_orientation = SSD1680_NORMAL;
+    //uint8_t ssd1680_orientation = SSD1680_NORMAL;
+    //uint8_t ssd1680_orientation = SSD1680_90_DEG;
+    //uint8_t ssd1680_orientation = SSD1680_180_DEG;
+    uint8_t ssd1680_orientation = SSD1680_270_DEG;
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
-    fonts_demo(ssd1680_disp, SSD1680_BLACK);
+    //fonts_demo(ssd1680_disp, SSD1680_BLACK);
+    display_demo_4(ssd1680_disp, SSD1680_BLACK);
 
-
-    //ssd1680_send_framebuffer(ssd1680_disp);
-    //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
+    ssd1680_send_framebuffer(ssd1680_disp);
+    ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
 
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);
