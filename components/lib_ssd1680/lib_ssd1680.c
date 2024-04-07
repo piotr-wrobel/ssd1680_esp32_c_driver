@@ -414,12 +414,27 @@ static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t rbv_condition, ssd1
 	return tmp;
 }
 
+void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, uint8_t* rotated_area, uint16_t rotated_area_size)
+{
+	uint16_t bytes_on_row = (x2 - x1 + 7) / 8;
+	uint16_t rows = y2 - y1;
+	for(uint16_t c = 0; c < x2 - x1; c++)
+	{
+		for(uint16_t r = 0; r < y2 - y1; r++)
+		{
+			//rotated_area[]
+		}
+	}
+
+}
+
 void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_bits_values, ssd1680_reverse_t reverse_bits_order)
 {
 
 	static const uint8_t BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F }, BitsSetTableRev[8] = { 0xFF, 0xFE, 0xFC, 0xF8, 0xF0, 0xE0, 0xC0, 0x80 };
 	int clmn_start, clmn_stop, idx; //offset;
 	uint16_t ycurr, xcurr;
+	uint8_t rotated_area[((y2 - y1 + 7) / 8) * (x2 - x1)];
 
     if (disp->orientation == SSD1680_90_DEG)
     {
@@ -446,6 +461,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 	switch (disp->orientation)
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
+			ssd1680_clmns_rows_rotate(disp, x1, y1, x2, y2, area, area_size,rotated_area,sizeof(rotated_area));
 			uint8_t y1bits, y2bits;
 			y1bits = (8 - (y1 % 8)) % 8;
 			y2bits = (y2 % 8) + 1;
@@ -480,14 +496,14 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 							printf("Section 1\r\n");
 						}
 #endif
-						area++; //TODO: Now (area -1) is incorrect, I think it should be (area - (x2-x1)) !!
+						area++;
 					} else if (ycurr == clmn_stop && y2bits > 0 && y1bits > 0)
 					{
 						if(clmn_stop - clmn_start > 1)
 						{
 							if( y1bits + y2bits > 8)
 							{
-								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
+								uint8_t mb = modify_byte(area - disp->res_y, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
 											 | modify_byte(area, reverse_bits_values, reverse_bits_order, 8 - y1bits, SSD1680_ORDER_123);
 
 								disp->framebuffer_bw[idx] =
@@ -507,7 +523,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 								area++;
 							} else
 							{
-								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_231);
+								uint8_t mb = modify_byte(area - disp->res_y, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_231);
 
 								disp->framebuffer_bw[idx] =
 										( disp->framebuffer_bw[idx] & BitsSetTable[8 - y2bits] )
@@ -530,7 +546,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 						{
 							if( y1bits + y2bits > 8)
 							{
-								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
+								uint8_t mb = modify_byte(area - disp->res_y, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
 											 | modify_byte(area, reverse_bits_values, reverse_bits_order, 8 - y1bits, SSD1680_ORDER_123);
 
 								disp->framebuffer_bw[idx] =
@@ -550,7 +566,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 								area++;
 							}else
 							{
-								uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_231);
+								uint8_t mb = modify_byte(area - disp->res_y, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_231);
 
 								disp->framebuffer_bw[idx] =
 										( disp->framebuffer_bw[idx] & BitsSetTable[8 - y2bits])
@@ -589,7 +605,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					{
 						if( y1bits > 0 )
 						{
-							uint8_t mb = modify_byte(area - 1, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
+							uint8_t mb = modify_byte(area - disp->res_y, reverse_bits_values, reverse_bits_order, -y1bits, SSD1680_ORDER_123)
 										 | modify_byte(area, reverse_bits_values, reverse_bits_order, 8 - y1bits, SSD1680_ORDER_123);
 
 							disp->framebuffer_bw[idx] = mb;
