@@ -416,13 +416,14 @@ static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t rbv_condition, ssd1
 
 void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, uint8_t* rotated_area, uint16_t rotated_area_size)
 {
+	memset(rotated_area, 0x00, rotated_area_size);
 	uint16_t bytes_on_row = (x2 - x1 + 7) / 8;
 	uint16_t rows = y2 - y1;
 	for(uint16_t c = 0; c < x2 - x1; c++)
 	{
 		for(uint16_t r = 0; r < y2 - y1; r++)
 		{
-			//rotated_area[]
+			//rotated_area[((rows + 7)/8)*c + ] |= area[]
 		}
 	}
 
