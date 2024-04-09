@@ -414,21 +414,27 @@ static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t rbv_condition, ssd1
 	return tmp;
 }
 
-void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, uint8_t* rotated_area, uint16_t rotated_area_size)
+void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t* area, uint16_t area_size, uint8_t* rotated_area, uint16_t rotated_area_size)
 {
 	memset(rotated_area, 0x00, rotated_area_size);
-	uint16_t bytes_on_row = (x2 - x1 + 7) / 8;
-	uint16_t rows = y2 - y1;
-	for(uint16_t c = 0; c < x2 - x1; c++)
+	uint16_t bytes_per_row = (x + 7) / 8;
+	uint16_t rows = y;
+
+	for(uint8_t c = 0; c < x; c++)
 	{
-		for(uint16_t r = 0; r < y2 - y1; r++)
+		for(uint8_t r = 0; r < y; r++)
 		{
-			//rotated_area[((rows + 7)/8)*c + ] |= area[]
+			uint8_t ida = (bytes_per_row * r) + (c / 8);
+			uint8_t idra = (((rows + 7) / 8) * c) + r / 8;
+			if(idra < rotated_area_size && ida < area_size)
+			{
+				rotated_area[idra] |= (area[(bytes_per_row * r) + (c / 8)] >> ((c % 8))) & 0x01;
+				if((r % 8) < 7 && (r + 1) < y)
+					rotated_area[idra] = rotated_area[idra] << 1;
+			}
 		}
 	}
-
 }
-
 void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_bits_values, ssd1680_reverse_t reverse_bits_order)
 {
 
@@ -462,7 +468,8 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 	switch (disp->orientation)
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
-			ssd1680_clmns_rows_rotate(disp, x1, y1, x2, y2, area, area_size,rotated_area,sizeof(rotated_area));
+			ssd1680_clmns_rows_rotate(disp,x2 - x1, y2 - y1, area, area_size,rotated_area,sizeof(rotated_area));
+			area = rotated_area; area_size = sizeof(rotated_area);
 			uint8_t y1bits, y2bits;
 			y1bits = (8 - (y1 % 8)) % 8;
 			y2bits = (y2 % 8) + 1;
