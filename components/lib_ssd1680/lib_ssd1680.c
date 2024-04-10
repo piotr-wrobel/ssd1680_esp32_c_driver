@@ -419,18 +419,23 @@ void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t*
 	memset(rotated_area, 0x00, rotated_area_size);
 	uint16_t bytes_per_row = (x + 7) / 8;
 	uint16_t rows = y;
+	uint8_t bytes_per_column = (rows + 7) / 8;
 
-	for(uint8_t c = 0; c < x; c++)
+	for(uint8_t rbyte = 0; rbyte < bytes_per_column; rbyte++ )
 	{
-		for(uint8_t r = 0; r < y; r++)
+		for(uint8_t c = 0; c < x; c++)
 		{
-			uint8_t ida = (bytes_per_row * r) + (c / 8);
-			uint8_t idra = (((rows + 7) / 8) * c) + r / 8;
-			if(idra < rotated_area_size && ida < area_size)
+			for(uint8_t r = 0; r < 8 || r + (rbyte * 8) < rows; r++)
 			{
-				rotated_area[idra] |= (area[(bytes_per_row * r) + (c / 8)] >> ((c % 8))) & 0x01;
-				if((r % 8) < 7 && (r + 1) < y)
-					rotated_area[idra] = rotated_area[idra] << 1;
+
+				uint8_t ida = (bytes_per_row * (r + (rbyte * 8))) + (c / 8);
+				uint8_t idra = (bytes_per_column * c) + rbyte;
+				if(idra < rotated_area_size && ida < area_size)
+				{
+					rotated_area[idra] |= (area[ida] >> ((c % 8))) & 0x01;
+					if(r < 7 && (r + (rbyte * 8) + 1) < y)
+						rotated_area[idra] = rotated_area[idra] << 1;
+				}
 			}
 		}
 	}
@@ -470,7 +475,8 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
 			ssd1680_clmns_rows_rotate(disp,x2 - x1, y2 - y1, area, area_size,rotated_area,sizeof(rotated_area));
 			area = rotated_area; area_size = sizeof(rotated_area);
-			uint8_t y1bits, y2bits;
+			uint8_t tmp, y1bits, y2bits;
+//			tmp = x1; x1 = y1; y1 = tmp; tmp = x2; x2 = y2; y2 = tmp; // ?? :)
 			y1bits = (8 - (y1 % 8)) % 8;
 			y2bits = (y2 % 8) + 1;
 			clmn_start = y1 >> 3;
