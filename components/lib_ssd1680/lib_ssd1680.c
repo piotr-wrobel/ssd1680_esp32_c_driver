@@ -425,11 +425,11 @@ void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t*
 	{
 		for(uint8_t c = 0; c < x; c++)
 		{
-			for(uint8_t r = 0; r < 8 || r + (rbyte * 8) < rows; r++)
+			for(uint8_t r = 0; r < 8 && r + (rbyte * 8) < rows; r++)
 			{
 
 				uint8_t ida = (bytes_per_row * (r + (rbyte * 8))) + (c / 8);
-				uint8_t idra = (bytes_per_column * c) + rbyte;
+				uint8_t idra = (rbyte * x) + c;
 				if(idra < rotated_area_size && ida < area_size)
 				{
 					rotated_area[idra] |= (area[ida] >> ((c % 8))) & 0x01;
