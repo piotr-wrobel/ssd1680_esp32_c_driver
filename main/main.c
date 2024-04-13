@@ -251,8 +251,8 @@ void static display_demo_3(ssd1680_t *disp, ssd1680_color_t color)
     printf("Area size: %d\r\n", sizeof(area));
 //    ssd1680_set_area(disp, (7*8)+1, 0, (8*8), 110, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
 
-    ssd1680_set_area(disp, 8, 0, 15, 7, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
-    ssd1680_set_area(disp, 3*8, 0,  (3*8)+7, 8, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
+    ssd1680_set_area(disp, 8, 0, 16, 7, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
+    ssd1680_set_area(disp, 3*8, 0,  (3*8)+8, 8, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
     //ssd1680_set_area(disp, 5*8, 0,  (5*8)+7, 15, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
     //ssd1680_set_area(disp, 7*8, 0,  (7*8)+7, 16, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
     //ssd1680_set_area(disp, 9*8, 0,  (9*8)+7, 23, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
