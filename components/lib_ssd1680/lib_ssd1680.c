@@ -473,7 +473,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 	switch (disp->orientation)
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
-			ssd1680_clmns_rows_rotate(disp,x2 - x1, y2 - y1, area, area_size,rotated_area,sizeof(rotated_area));
+			ssd1680_clmns_rows_rotate(disp,x2 - x1 + 1, y2 - y1 + 1, area, area_size,rotated_area,sizeof(rotated_area));
 			area = rotated_area; area_size = sizeof(rotated_area);
 			uint8_t y1bits, y2bits;
 			y1bits = (8 - (y1 % 8)) % 8;
