@@ -428,7 +428,7 @@ void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t*
 			for(uint8_t r = 0; r < 8 && r + (rbyte * 8) < rows; r++)
 			{
 
-				uint8_t ida = (bytes_per_row * (r + (rbyte * 8))) + (c / 8);
+				uint8_t ida = (bytes_per_row * (7 - r + (rbyte * 8))) + (c / 8);
 				uint8_t idra = (rbyte * x) + c;
 				if(idra < rotated_area_size && ida < area_size)
 				{
@@ -446,7 +446,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 	static const uint8_t BitsSetTable[8] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F }, BitsSetTableRev[8] = { 0xFF, 0xFE, 0xFC, 0xF8, 0xF0, 0xE0, 0xC0, 0x80 };
 	int clmn_start, clmn_stop, idx; //offset;
 	uint16_t ycurr, xcurr;
-	uint8_t rotated_area[((y2 - y1 + 7) / 8) * (x2 - x1)];
+	uint8_t rotated_area[((y2 - y1 + 7) / 8) * (x2 - x1 + 1)];
 
     if (disp->orientation == SSD1680_90_DEG)
     {
@@ -458,17 +458,6 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
     	x1 += 8 - (disp->res_x % 8);
     	x2 += 8 - (disp->res_x % 8);
     }
-
-//    switch (disp->orientation)
-//    {
-//		case SSD1680_90_DEG: case SSD1680_270_DEG:
-//			idx = x + ((y >> 3) * disp->rows_cnt);
-//			offset = 7 - (y % 8);
-//			break;
-//		default: // SSD1680_NORMAL || SSD1680_180_DEG
-//			idx = (x >> 3) + (y * disp->clmn_cnt);
-//			offset = 7 - (x % 8);
-//			break;
 
 	switch (disp->orientation)
 	{

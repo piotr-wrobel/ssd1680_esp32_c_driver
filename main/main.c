@@ -273,11 +273,27 @@ void static display_demo_3(ssd1680_t *disp, ssd1680_color_t color)
 
 void static display_demo_4(ssd1680_t *disp, ssd1680_color_t color)
 {
-	uint8_t values[] = {0x3D, 0x35, 0x2D, 0x25};
+	uint8_t area[] = {0xFF,0xFF,
+			  	  	  	0x01,0x80,
+						0x11,0xB8,
+						0x11,0xA0,
+						0x11,0xB8,
+						0x11,0x88,
+						0x91,0xB8,
+						0x81,0x83,
+						0xC1,0x81,
+						0x1D,0xA9,
+						0x11,0xA8,
+						0x19,0xB8,
+						0x11,0xA0,
+						0x1D,0xA0,
+						0x01,0x80,
+						0xFF,0xFF
+			  	  	  };
 	ssd1680_fill(disp, SSD1680_WHITE);
-	for(uint8_t i = 0; i < sizeof(values); i++)
-		disp->framebuffer_bw[i+250] = values[i];
-
+	ssd1680_set_area(disp, 0, 0, 15, 15, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 16, 16, 16+15, 16+15, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 32, 32, 32+15, 32+15, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
 }
 
 void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
@@ -398,9 +414,11 @@ void app_main(void)
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
-    display_demo_3(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_3(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
-    //display_demo_4(ssd1680_disp, SSD1680_BLACK);
+    display_demo_4(ssd1680_disp, SSD1680_BLACK);
+    //ssd1680_cursor_t cursor;
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_consolas_22pt, 0, 0, "A", SSD1680_BLACK);
 
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
