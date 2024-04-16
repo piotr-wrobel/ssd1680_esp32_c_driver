@@ -24,6 +24,7 @@
 
 #include "lib_ssd1680.h"
 #include "ssd1680_fonts.h"
+#include "eye.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -296,6 +297,13 @@ void static display_demo_4(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_set_area(disp, 32, 32, 32+15, 32+15, area, sizeof(area), SSD1680_BLACK, SSD1680_REVERSE_TRUE, SSD1680_REVERSE_TRUE);
 }
 
+void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
+{
+	ssd1680_fill(disp, SSD1680_WHITE);
+	ssd1680_set_area(disp, 0, 0, 249, 121, eye, sizeof(eye), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+}
+
+
 void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
 	uint8_t allowed_characters[] = {'1','2','3','4','5','6','7','8','9','0','Q','W','E','R','T','Y','U','I',
@@ -416,7 +424,8 @@ void app_main(void)
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
-    display_demo_4(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_4(ssd1680_disp, SSD1680_BLACK);
+    display_demo_5(ssd1680_disp, SSD1680_BLACK);
     //ssd1680_cursor_t cursor;
     //cursor = ssd1680_display_string(ssd1680_disp, &font_consolas_22pt, 0, 0, "A", SSD1680_BLACK);
 
