@@ -425,15 +425,20 @@ void ssd1680_clmns_rows_rotate(ssd1680_t *disp, uint16_t x, uint16_t y, uint8_t*
 	{
 		for(uint8_t c = 0; c < x; c++)
 		{
-			for(uint8_t r = 0; r < 8 && r + (rbyte * 8) < rows; r++)
+
+			uint8_t remain_rows = rows - (rbyte * 8);
+			if(remain_rows >= 8)
+				remain_rows = 8;
+
+			for(int16_t r = remain_rows - 1; r >= 0; r--)
 			{
 
-				uint8_t ida = (bytes_per_row * (7 - r + (rbyte * 8))) + (c / 8);
+				uint8_t ida = (bytes_per_row * (r + (rbyte * 8))) + (c / 8);
 				uint8_t idra = (rbyte * x) + c;
 				if(idra < rotated_area_size && ida < area_size)
 				{
 					rotated_area[idra] |= (area[ida] >> ((c % 8))) & 0x01;
-					if(r < 7 && (r + (rbyte * 8) + 1) < y)
+					if(r > 0)
 						rotated_area[idra] = rotated_area[idra] << 1;
 				}
 			}
@@ -931,9 +936,22 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 	ssd1680_cursor_t cursor;
 	cursor.x = x;
 	cursor.y = y;
+	uint8_t res_x, res_y;
+	switch (disp->orientation)
+	{
+		case SSD1680_90_DEG: case SSD1680_270_DEG:
+			res_x = disp->res_y;
+			res_y = disp->res_x;
+		break;
+		default:
+			res_x = disp->res_x;
+			res_y = disp->res_y;
+	}
+
+
 	while(*string)
 	{
-		if (cursor.x > disp->res_x - font->x_size)
+		if (cursor.x > res_x - font->x_size)
 		{
 			cursor.x = 0;
 			cursor.y += font->y_size;

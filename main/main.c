@@ -315,11 +315,24 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 	uint32_t random_number;
 	ssd1680_cursor_t cursor;
 	ssd1680_font_t * font;
-	cursor = ssd1680_display_string(disp, &font_terminal_9pt, 0, 0, "Random characters test !", SSD1680_BLACK);
+
+	uint8_t res_x, res_y;
+	switch (disp->orientation)
+	{
+		case SSD1680_90_DEG: case SSD1680_270_DEG:
+			res_x = disp->res_y;
+			res_y = disp->res_x;
+		break;
+		default:
+			res_x = disp->res_x;
+			res_y = disp->res_y;
+	}
+	font = &font_terminal_9pt;
+	cursor = ssd1680_display_string(disp, font, 20, (res_y / 2) - font->y_size , "Random characters test !", SSD1680_BLACK);
 
 	ssd1680_send_framebuffer(disp);
     ssd1680_refresh(disp, FAST_FULL_REFRESH);
-	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	vTaskDelay(2000 / portTICK_PERIOD_MS);
 
 	while(1)
 	{
@@ -353,12 +366,12 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 					font = &font_terminal_9pt;
 			}
 
-			if(cursor.y + font->y_size > disp->res_y)
+			if(cursor.y + font->y_size > res_y)
 				break; // Exit from while(2)
 
 			cursor.x = (uint8_t)(random_number & 0x07);
 
-			while(cursor.x < disp->res_x - font->x_size)
+			while(cursor.x < res_x - font->x_size)
 			{
 
 				random_number = esp_random();
@@ -372,7 +385,7 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 		ssd1680_send_framebuffer(disp);
 	    ssd1680_refresh(disp, FAST_FULL_REFRESH);
-		vTaskDelay(5000 / portTICK_PERIOD_MS);
+		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
 }
 
@@ -423,11 +436,17 @@ void app_main(void)
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
-    //fonts_demo(ssd1680_disp, SSD1680_BLACK);
-    display_demo_4(ssd1680_disp, SSD1680_BLACK);
+    fonts_demo(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_4(ssd1680_disp, SSD1680_BLACK);
     //display_demo_5(ssd1680_disp, SSD1680_BLACK);
     //ssd1680_cursor_t cursor;
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_consolas_22pt, 0, 0, "A", SSD1680_BLACK);
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 0, "A", SSD1680_BLACK);
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 15, 2, "A", SSD1680_BLACK);
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 30, 6, "A", SSD1680_BLACK);
+
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 45, 0, "A", SSD1680_BLACK);
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 60, 2, "A", SSD1680_BLACK);
+    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 75, 6, "A", SSD1680_BLACK);
 
     ssd1680_send_framebuffer(ssd1680_disp);
     ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
