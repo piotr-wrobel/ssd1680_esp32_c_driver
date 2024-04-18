@@ -957,7 +957,9 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 			cursor.y += font->y_size;
 		}
 		cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, *string, color);
+#ifdef DEBUG
 		printf("display: %c -> %d\r\n--------\r\n", *string, *string);
+#endif
 		string++;
 	}
 	return cursor;

@@ -7,6 +7,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <string.h>
+#include <math.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
 #include "freertos/task.h"
@@ -328,7 +329,7 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 			res_y = disp->res_y;
 	}
 	font = &font_terminal_9pt;
-	cursor = ssd1680_display_string(disp, font, 20, (res_y / 2) - font->y_size , "Random characters test !", SSD1680_BLACK);
+	cursor = ssd1680_display_string(disp, font, 20, (res_y / 2) - font->y_size , "Random characters test !", color);
 
 	ssd1680_send_framebuffer(disp);
     ssd1680_refresh(disp, FAST_FULL_REFRESH);
@@ -376,7 +377,7 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 				random_number = esp_random();
 				uint8_t character = (uint8_t)((random_number & 0xFF) % sizeof(allowed_characters));
-				cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, allowed_characters[character], SSD1680_BLACK);
+				cursor.x = ssd1680_display_char(disp, font, cursor.x, cursor.y, allowed_characters[character], color);
 			}
 			cursor.x = 0 ;
 			cursor.y += font->y_size;
@@ -387,6 +388,36 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 	    ssd1680_refresh(disp, FAST_FULL_REFRESH);
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
+}
+
+void static fonts_demo_2(ssd1680_t *disp, ssd1680_color_t color)
+{
+	ssd1680_cursor_t cursor;
+	ssd1680_font_t * font = &font_consolas_22pt;
+	uint8_t x1 = 0,x2 = 0;
+	for(uint8_t i = 0; i < 12; i++)
+	{
+		ssd1680_display_char(disp, font, x1, 0, 'A' + i, color);
+		ssd1680_display_char(disp, font, x1, 54 + i, 'A' + i, color);
+		x1 = ssd1680_display_char(disp, font, x1, 22 - i, 'A' + i, color);
+	}
+	font = &font_terminal_9pt;
+	x1 = 0;
+
+	for(uint8_t i = 0; i < 44; i++)
+	{
+		x1 = ssd1680_display_char(disp, font, x1, 95 + (int)(sin((double)i / 4) * 15), 'A' + i, color);
+	}
+	for(uint8_t i = 0; i < 12; i++)
+	{
+		x1 = ssd1680_display_char(disp, font, 234 + (int)(sin((double)i/1.5) * 10), i * (font->y_size - 1), 'a' + i, color);
+	}
+
+
+	ssd1680_display_string(disp, font, 0, 45, "Characters can be positioned with acc. of 1px", color);
+
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 }
 
 void app_main(void)
@@ -436,20 +467,13 @@ void app_main(void)
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
-    fonts_demo(ssd1680_disp, SSD1680_BLACK);
     //display_demo_4(ssd1680_disp, SSD1680_BLACK);
     //display_demo_5(ssd1680_disp, SSD1680_BLACK);
-    //ssd1680_cursor_t cursor;
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 0, 0, "A", SSD1680_BLACK);
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 15, 2, "A", SSD1680_BLACK);
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt, 30, 6, "A", SSD1680_BLACK);
+    //fonts_demo(ssd1680_disp, SSD1680_BLACK);
+    fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
 
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 45, 0, "A", SSD1680_BLACK);
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 60, 2, "A", SSD1680_BLACK);
-    //cursor = ssd1680_display_string(ssd1680_disp, &font_terminal_9pt_bold, 75, 6, "A", SSD1680_BLACK);
-
-    ssd1680_send_framebuffer(ssd1680_disp);
-    ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
+    //ssd1680_send_framebuffer(ssd1680_disp);
+    //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
 
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);
