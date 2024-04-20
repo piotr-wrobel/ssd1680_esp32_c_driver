@@ -5,6 +5,7 @@ The project will use an ESP32 or similar microcontroller with WIFI or Bluetooth 
 
 At the moment, I'm focusing on the e-paper library SSD1680, the photos and movies below shows the progress of the project:
 
+[![Image display test](https://img.youtube.com/vi/zcHwlS6AHhI/0.jpg)](https://youtu.be/zcHwlS6AHhI "Image display test")
 ![image](https://github.com/piotr-wrobel/100com_project/assets/46136339/b327aff5-b677-4bcc-867e-3e17c8eb6e24)
 
 ![0679f33df0e95535e655a31040e3609c2aa19fda2ba1f2f6103ebc99fd1d3002](https://github.com/piotr-wrobel/100com_project/assets/46136339/d6092f85-fc1d-476c-a3fe-0397e45b4892)
