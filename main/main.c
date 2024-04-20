@@ -25,7 +25,9 @@
 
 #include "lib_ssd1680.h"
 #include "ssd1680_fonts.h"
-#include "eye.h"
+#include "eye_122_250.h"
+#include "c64_122_250.h"
+#include "test_122_250.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -301,7 +303,30 @@ void static display_demo_4(ssd1680_t *disp, ssd1680_color_t color)
 void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 {
 	ssd1680_fill(disp, SSD1680_WHITE);
-	ssd1680_set_area(disp, 0, 0, 249, 121, eye, sizeof(eye), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_FALSE);
+	uint8_t counter = 0;
+	uint8_t * image_pointer;
+	while(1)
+	{
+		switch (counter % 3)
+		{
+			case 0:
+				image_pointer = image_test_122_250;
+				break;
+			case 1:
+				image_pointer = image_eye_122_250;
+				break;
+			case 2:
+			default:
+				image_pointer = image_c64_122_250;
+		}
+		counter++;
+
+		ssd1680_set_area(disp, 0, 0, 121, 249, image_pointer, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+		ssd1680_send_framebuffer(disp);
+		ssd1680_refresh(disp, FAST_FULL_REFRESH);
+		vTaskDelay(3000 / portTICK_PERIOD_MS);
+	}
+
 }
 
 
@@ -458,22 +483,22 @@ void app_main(void)
     ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH1);
     ESP_ERROR_CHECK(ret);
 
-    //uint8_t ssd1680_orientation = SSD1680_NORMAL;
+    uint8_t ssd1680_orientation = SSD1680_NORMAL;
     //uint8_t ssd1680_orientation = SSD1680_90_DEG;
     //uint8_t ssd1680_orientation = SSD1680_180_DEG;
-    uint8_t ssd1680_orientation = SSD1680_270_DEG;
+    //uint8_t ssd1680_orientation = SSD1680_270_DEG;
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
     //display_demo_4(ssd1680_disp, SSD1680_BLACK);
-    //display_demo_5(ssd1680_disp, SSD1680_BLACK);
+    display_demo_5(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
-    fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
+    //fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
 
-    //ssd1680_send_framebuffer(ssd1680_disp);
-    //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
+    ssd1680_send_framebuffer(ssd1680_disp);
+    ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
 
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);
