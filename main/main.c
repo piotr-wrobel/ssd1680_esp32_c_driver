@@ -307,7 +307,7 @@ void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 	uint8_t * image_pointer;
 	while(1)
 	{
-		switch (counter % 3)
+		switch (counter++)
 		{
 			case 0:
 				image_pointer = image_test_122_250;
@@ -319,12 +319,21 @@ void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 			default:
 				image_pointer = image_c64_122_250;
 		}
-		counter++;
+		if(counter > 2) counter = 0;
 
 		ssd1680_set_area(disp, 0, 0, 121, 249, image_pointer, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 		ssd1680_send_framebuffer(disp);
 		ssd1680_refresh(disp, FAST_FULL_REFRESH);
-		vTaskDelay(3000 / portTICK_PERIOD_MS);
+		vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+		ssd1680_read_ram(disp, SSD1680_270_DEG, SSD1680_READ_RAM_BW);
+		ssd1680_change_orientation(disp, SSD1680_270_DEG);
+		ssd1680_display_string(disp, &font_terminal_9pt, 0, 0, "Font test", color);
+		ssd1680_send_framebuffer(disp);
+		ssd1680_refresh(disp, FAST_FULL_REFRESH);
+		vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+		ssd1680_change_orientation(disp, SSD1680_NORMAL);
 	}
 
 }

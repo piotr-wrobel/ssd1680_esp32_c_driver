@@ -69,6 +69,21 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
     gpio_set_level(disp->pinmap.cs, 1);
 }
 
+static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
+{
+    static spi_transaction_t trs;
+
+    printf("data_size: %d\r\n", data_size);
+    trs.length = 8 + (data_size * 8);
+    trs.rxlength = data_size * 8;
+    trs.tx_buffer = &cmd;
+    trs.rx_buffer = data;
+    gpio_set_level(disp->pinmap.dc, 0);
+    gpio_set_level(disp->pinmap.cs, 0);
+    spi_device_polling_transmit(disp->spi_device, &trs);
+    gpio_set_level(disp->pinmap.cs, 1);
+}
+
 static void ssd1680_hw_reset(ssd1680_t *disp)
 {
     gpio_set_level(disp->pinmap.reset, 1);
@@ -266,7 +281,7 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
         .clock_speed_hz = SPI_MASTER_FREQ_20M,
         .spics_io_num = -1,
         .queue_size = 1,
-        .flags = SPI_DEVICE_HALFDUPLEX,
+        //.flags = SPI_DEVICE_HALFDUPLEX,
     };
 
     esp_err_t err = spi_bus_add_device(spi_host, &devcfg, &disp->spi_device);
@@ -310,10 +325,36 @@ void ssd1680_wakeup(ssd1680_t *disp)
     ssd1680_init_sequence(disp);
     ssd1680_send_framebuffer(disp);
 }
-void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t ssd1680_orientation)
+void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t orientation)
 {
-	disp->orientation = ssd1680_orientation;
+	disp->orientation = orientation;
 	ssd1680_setup_ram(disp);
+}
+
+void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd1680_read_ram_opt_t read_ram_opt)
+{
+	uint8_t * framebuffer;
+	ssd1680_orientation_t orientation_orig = disp->orientation;
+
+	ssd1680_change_orientation(disp, orientation);
+
+	switch(read_ram_opt)
+	{
+		case SSD1680_READ_RAM_BW:
+			framebuffer = disp->framebuffer_bw;
+			break;
+		case SSD1680_READ_RAM_RED:
+		default:
+			framebuffer = disp->framebuffer_red;
+			break;
+	}
+	 memset(framebuffer, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size); // For tests
+
+	ssd1680_write(disp, SSD1680_READ_RAM_OPT, &read_ram_opt, 8);
+	ssd1680_wait_busy(disp);
+	ssd1680_read(disp, SSD1680_READ_RAM, framebuffer, disp->framebuffer_size);
+	ssd1680_wait_busy(disp);
+	ssd1680_change_orientation(disp, orientation_orig);
 }
 
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color)
