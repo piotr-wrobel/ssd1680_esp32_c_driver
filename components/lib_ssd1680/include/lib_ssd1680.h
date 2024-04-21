@@ -96,7 +96,7 @@ void ssd1680_deinit(ssd1680_t* disp);
 
 void ssd1680_sleep(ssd1680_t *disp);
 void ssd1680_wakeup(ssd1680_t *disp);
-
+void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t ssd1680_orientation);
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color);
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color);
 void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, ssd1680_color_t color); //Bresenham’s Line Drawing Algorithm

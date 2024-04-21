@@ -310,6 +310,11 @@ void ssd1680_wakeup(ssd1680_t *disp)
     ssd1680_init_sequence(disp);
     ssd1680_send_framebuffer(disp);
 }
+void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t ssd1680_orientation)
+{
+	disp->orientation = ssd1680_orientation;
+	ssd1680_setup_ram(disp);
+}
 
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color)
 {
