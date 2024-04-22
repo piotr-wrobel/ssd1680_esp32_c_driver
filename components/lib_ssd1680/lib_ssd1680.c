@@ -982,16 +982,16 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 	ssd1680_cursor_t cursor;
 	cursor.x = x;
 	cursor.y = y;
-	uint8_t res_x, res_y;
+	uint8_t res_x; //res_y;
 	switch (disp->orientation)
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
 			res_x = disp->res_y;
-			res_y = disp->res_x;
+			//res_y = disp->res_x;
 		break;
 		default:
 			res_x = disp->res_x;
-			res_y = disp->res_y;
+			//res_y = disp->res_y;
 	}
 
 

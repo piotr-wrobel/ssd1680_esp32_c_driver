@@ -8,6 +8,7 @@
 #define COMPONENTS_FONTS_CONSOLAS_16PT_BOLD_H_
 
 #include <stdint.h>
+#include "font_type.h"
 
 //
 // Pseudocode for retrieving data for a specific character:
@@ -17,13 +18,7 @@
 // data = consolas_16pt_bold[offset]
 //
 
-struct {
-	const uint8_t x_size;
-	const uint8_t y_size;
-	const uint8_t bytes_per_row;
-	const uint8_t bytes_per_char;
-	const unsigned char data[(144 - 31) * 42];
-} font_consolas_16pt_bold = {
+ssd1680_font_t font_consolas_16pt_bold = {
 			.x_size = 13,
 			.y_size = 21,
 			.bytes_per_row = 2,

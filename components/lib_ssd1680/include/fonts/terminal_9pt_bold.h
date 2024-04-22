@@ -8,6 +8,7 @@
 #define COMPONENTS_FONTS_TERMINAL_9PT_BOLD_H_
 
 #include <stdint.h>
+#include "font_type.h"
 
 //
 // Pseudocode for retrieving data for a specific character:
@@ -17,13 +18,7 @@
 // data = terminal_9pt[offset]
 //
 
-struct {
-	const uint8_t x_size;
-	const uint8_t y_size;
-	const uint8_t bytes_per_row;
-	const uint8_t bytes_per_char;
-	const unsigned char data[(143 - 31) * 12];
-} font_terminal_9pt_bold = {
+ssd1680_font_t font_terminal_9pt_bold = {
 			.x_size = 6,
 			.y_size = 12,
 			.bytes_per_row = 1,

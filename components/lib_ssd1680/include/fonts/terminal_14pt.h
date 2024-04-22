@@ -8,6 +8,7 @@
 #define COMPONENTS_LIB_SSD1680_INCLUDE_FONTS_TERMINAL_14PT_H_
 
 #include <stdint.h>
+#include "font_type.h"
 
 //
 // Pseudocode for retrieving data for a specific character:
@@ -17,13 +18,7 @@
 // data = terminal_14pt[offset]
 //
 
-struct {
-	const uint8_t x_size;
-	const uint8_t y_size;
-	const uint8_t bytes_per_row;
-	const uint8_t bytes_per_char;
-	const unsigned char data[(144 - 31) * 36];
-} font_terminal_14pt = {
+ssd1680_font_t font_terminal_14pt = {
 			.x_size = 10,
 			.y_size = 18,
 			.bytes_per_row = 2,

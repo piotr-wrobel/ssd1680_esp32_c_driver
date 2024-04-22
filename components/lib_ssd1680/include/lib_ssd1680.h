@@ -7,6 +7,8 @@
 #include <driver/spi_master.h>
 #include <driver/gpio.h>
 
+#include "font_type.h"
+
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
   PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
@@ -89,13 +91,13 @@ typedef struct {
 	uint16_t y;
 } ssd1680_cursor_t;
 
-typedef struct {
-	const uint8_t x_size;
-	const uint8_t y_size;
-	const uint8_t bytes_per_row;
-	const uint8_t bytes_per_char;
-	const unsigned char data[];
-} ssd1680_font_t;
+//typedef struct {
+//	const uint8_t x_size;
+//	const uint8_t y_size;
+//	const uint8_t bytes_per_row;
+//	const uint8_t bytes_per_char;
+//	const unsigned char data[];
+//} ssd1680_font_t;
 
 ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation);
 void ssd1680_deinit(ssd1680_t* disp);
