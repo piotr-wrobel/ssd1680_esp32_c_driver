@@ -325,19 +325,9 @@ void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 		ssd1680_send_framebuffer(disp);
 		ssd1680_refresh(disp, FAST_FULL_REFRESH);
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
-
-		ssd1680_read_ram(disp, SSD1680_270_DEG, SSD1680_READ_RAM_BW);
-		ssd1680_change_orientation(disp, SSD1680_270_DEG);
-		ssd1680_display_string(disp, &font_terminal_9pt, 0, 0, "Font test", color);
-		ssd1680_send_framebuffer(disp);
-		ssd1680_refresh(disp, FAST_FULL_REFRESH);
-		vTaskDelay(2000 / portTICK_PERIOD_MS);
-
-		ssd1680_change_orientation(disp, SSD1680_NORMAL);
 	}
 
 }
-
 
 void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
@@ -426,9 +416,9 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 void static fonts_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 {
-	ssd1680_cursor_t cursor;
+	//ssd1680_cursor_t cursor;
 	ssd1680_font_t * font = &font_consolas_22pt;
-	uint8_t x1 = 0,x2 = 0;
+	uint8_t x1 = 0; //,x2 = 0;
 	for(uint8_t i = 0; i < 12; i++)
 	{
 		ssd1680_display_char(disp, font, x1, 0, 'A' + i, color);
@@ -453,6 +443,28 @@ void static fonts_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_send_framebuffer(disp);
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 }
+
+void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
+{
+	ssd1680_fill(disp, SSD1680_WHITE);
+
+	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+	vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+	ssd1680_read_ram(disp, SSD1680_270_DEG, SSD1680_READ_RAM_BW);
+	ssd1680_change_orientation(disp, SSD1680_270_DEG);
+	ssd1680_display_string(disp, &font_terminal_9pt, 0, 0, "Font test", color);
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+	vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+	ssd1680_change_orientation(disp, SSD1680_NORMAL);
+
+
+}
+
 
 void app_main(void)
 {
@@ -492,17 +504,18 @@ void app_main(void)
     ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH1);
     ESP_ERROR_CHECK(ret);
 
-    uint8_t ssd1680_orientation = SSD1680_NORMAL;
+    //uint8_t ssd1680_orientation = SSD1680_NORMAL;
     //uint8_t ssd1680_orientation = SSD1680_90_DEG;
     //uint8_t ssd1680_orientation = SSD1680_180_DEG;
-    //uint8_t ssd1680_orientation = SSD1680_270_DEG;
+    uint8_t ssd1680_orientation = SSD1680_270_DEG;
     ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
     //display_demo_2(ssd1680_disp, SSD1680_BLACK);
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
     //display_demo_4(ssd1680_disp, SSD1680_BLACK);
-    display_demo_5(ssd1680_disp, SSD1680_BLACK);
+    //display_demo_5(ssd1680_disp, SSD1680_BLACK);
+    ram_demo_1(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
 
