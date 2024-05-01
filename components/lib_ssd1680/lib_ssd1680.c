@@ -9,6 +9,7 @@
 #include <sys/time.h>
 
 static struct timeval tv_now;
+DMA_ATTR uint8_t cmd_in_ram;
 
 typedef struct
 {
@@ -69,16 +70,16 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
     gpio_set_level(disp->pinmap.cs, 1);
 }
 
-//I have a problem with this function, it stopped working, the controller hangs when receiving data via SPI. I'm looking for a solution......
+//I have a problem with this function, it stopped working, the controller hangs when receiving data via SPI. I'm looking for a solution.......
 
 static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 {
     static spi_transaction_t trs;
-
+    cmd_in_ram = cmd;
     printf("\r\ndata_size: %d\r\n", data_size);
     trs.length = 8 + (data_size * 8);
     trs.rxlength = data_size * 8;
-    trs.tx_buffer = &cmd;
+    trs.tx_buffer = &cmd_in_ram;
     trs.rx_buffer = data;
     gpio_set_level(disp->pinmap.dc, 0);
     gpio_set_level(disp->pinmap.cs, 0);

@@ -91,6 +91,7 @@ typedef struct {
 	uint16_t y;
 } ssd1680_cursor_t;
 
+
 //typedef struct {
 //	const uint8_t x_size;
 //	const uint8_t y_size;
