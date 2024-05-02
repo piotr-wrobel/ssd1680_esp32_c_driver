@@ -532,7 +532,7 @@ void app_main(void)
     };
 
     //Initialize the SPI bus
-    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH1);
+    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO);
     ESP_ERROR_CHECK(ret);
 
     uint8_t ssd1680_orientation = SSD1680_NORMAL;

@@ -262,11 +262,11 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 
     disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
 
-    disp->framebuffer_bw = malloc(disp->framebuffer_size);
+    disp->framebuffer_bw = heap_caps_malloc(disp->framebuffer_size, MALLOC_CAP_DMA);
     if (disp->framebuffer_bw == NULL)
         goto error;
 
-    disp->framebuffer_red = malloc(disp->framebuffer_size);
+    disp->framebuffer_red = heap_caps_malloc(disp->framebuffer_size, MALLOC_CAP_DMA);
     if (disp->framebuffer_red == NULL)
         goto error;
 
