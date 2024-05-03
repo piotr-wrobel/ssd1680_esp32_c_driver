@@ -72,16 +72,41 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
 
 //I have a problem with this function, it stopped working, the controller hangs when receiving data via SPI. I'm looking for a solution.......
 
+//static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
+//{
+//    static spi_transaction_t trs;
+//    cmd_in_ram = cmd;
+//    printf("\r\ndata_size: %d\r\n", data_size);
+//    trs.length = 8 + (data_size * 8);
+//    trs.rxlength = data_size * 8;
+//    trs.tx_buffer = &cmd_in_ram;
+//    trs.rx_buffer = data;
+//    gpio_set_level(disp->pinmap.dc, 0);
+//    gpio_set_level(disp->pinmap.cs, 0);
+//    spi_device_polling_transmit(disp->spi_device, &trs);
+//    gpio_set_level(disp->pinmap.cs, 1);
+//}
+
 static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 {
     static spi_transaction_t trs;
     cmd_in_ram = cmd;
     printf("\r\ndata_size: %d\r\n", data_size);
-    trs.length = 8 + (data_size * 8);
-    trs.rxlength = data_size * 8;
+    trs.length = 8;
     trs.tx_buffer = &cmd_in_ram;
-    trs.rx_buffer = data;
+    trs.rx_buffer = NULL;
+
     gpio_set_level(disp->pinmap.dc, 0);
+    gpio_set_level(disp->pinmap.cs, 0);
+    spi_device_polling_transmit(disp->spi_device, &trs);
+    gpio_set_level(disp->pinmap.cs, 1);
+
+    trs.length = data_size * 8;
+    trs.rxlength = data_size * 8;
+    trs.tx_buffer = NULL;
+    trs.rx_buffer = data;
+
+    gpio_set_level(disp->pinmap.dc, 1);
     gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
     gpio_set_level(disp->pinmap.cs, 1);
@@ -281,10 +306,13 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 
     spi_device_interface_config_t devcfg = {
         .mode = 0,
-        //.clock_speed_hz = SPI_MASTER_FREQ_20M,
-		.clock_speed_hz = SPI_MASTER_FREQ_8M,
+        .clock_speed_hz = SPI_MASTER_FREQ_20M,
+		//.clock_speed_hz = SPI_MASTER_FREQ_8M,
         .spics_io_num = -1,
-        .queue_size = 1,
+        .queue_size = 3,
+		.command_bits = 0,
+		.address_bits = 0,
+		.dummy_bits = 0,
         //.flags = SPI_DEVICE_HALFDUPLEX,
     };
 
