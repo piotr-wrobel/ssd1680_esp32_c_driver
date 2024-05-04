@@ -306,8 +306,8 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 
     spi_device_interface_config_t devcfg = {
         .mode = 0,
-        .clock_speed_hz = SPI_MASTER_FREQ_20M,
-		//.clock_speed_hz = SPI_MASTER_FREQ_8M,
+        //.clock_speed_hz = SPI_MASTER_FREQ_20M,
+		.clock_speed_hz = SPI_MASTER_FREQ_500K,
         .spics_io_num = -1,
         .queue_size = 3,
 		.command_bits = 0,
@@ -368,7 +368,7 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd168
 	uint8_t * framebuffer;
 	ssd1680_orientation_t orientation_orig = disp->orientation;
 
-	ssd1680_change_orientation(disp, orientation);
+	//ssd1680_change_orientation(disp, orientation);
 
 	switch(read_ram_opt)
 	{
@@ -390,7 +390,7 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd168
 	printf("\r\nRAM read, phaze 4");
 	ssd1680_wait_busy(disp);
 	printf("\r\nRAM read, phaze 5");
-	ssd1680_change_orientation(disp, orientation_orig);
+	//ssd1680_change_orientation(disp, orientation_orig);
 }
 
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color)

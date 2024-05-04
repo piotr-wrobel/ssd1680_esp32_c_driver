@@ -9,6 +9,11 @@
 
 #include "font_type.h"
 
+#define SPI_MASTER_FREQ_4M      (80 * 1000 * 1000 / 20)   ///< 8MHz
+#define SPI_MASTER_FREQ_2M      (80 * 1000 * 1000 / 40)   ///< 4MHz
+#define SPI_MASTER_FREQ_1M      (80 * 1000 * 1000 / 80)   ///< 1MHz
+#define SPI_MASTER_FREQ_500K    (80 * 1000 * 1000 / 160)  ///< 500KHz
+
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
   PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */

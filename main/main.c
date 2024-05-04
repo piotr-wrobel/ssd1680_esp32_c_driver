@@ -462,7 +462,7 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 
 	ssd1680_set_area(disp, 0, 0, 121, 249, image_test_ram_122_250, sizeof(image_test_ram_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 
-	print_buffor("Before send", disp->framebuffer_bw, 5);
+	print_buffor("Before send", disp->framebuffer_bw, 10);
 	ssd1680_send_framebuffer(disp);
 
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
@@ -470,7 +470,7 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 
 	memcpy(fb_tmp, disp->framebuffer_bw, disp->framebuffer_size);
 	ssd1680_fill(disp, SSD1680_WHITE);
-	print_buffor("Filled by white", disp->framebuffer_bw, 5);
+	print_buffor("Filled by white", disp->framebuffer_bw, 10);
 	print_buffor("From tmp", fb_tmp, 5);
 
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
@@ -481,9 +481,9 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 	vTaskDelay(2000 / portTICK_PERIOD_MS);
 	memset(disp->framebuffer_bw, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size );
-	print_buffor("Filled again by white", disp->framebuffer_bw, 5);
+	print_buffor("Filled again by white", disp->framebuffer_bw, 10);
 	ssd1680_read_ram(disp, SSD1680_NORMAL, SSD1680_READ_RAM_BW);
-	print_buffor("Readed from RAM", disp->framebuffer_bw, 5);
+	print_buffor("Readed from RAM", disp->framebuffer_bw, 10);
 
 //	ssd1680_change_orientation(disp, SSD1680_270_DEG);
 //	ssd1680_display_string(disp, &font_terminal_9pt, 0, 0, "Font test", color);
