@@ -92,22 +92,19 @@ static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size
     static spi_transaction_t trs;
     cmd_in_ram = cmd;
     printf("\r\ndata_size: %d\r\n", data_size);
+
     trs.length = 8;
     trs.tx_buffer = &cmd_in_ram;
     trs.rx_buffer = NULL;
-
     gpio_set_level(disp->pinmap.dc, 0);
     gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
-    gpio_set_level(disp->pinmap.cs, 1);
 
     trs.length = data_size * 8;
     trs.rxlength = data_size * 8;
     trs.tx_buffer = NULL;
     trs.rx_buffer = data;
-
     gpio_set_level(disp->pinmap.dc, 1);
-    gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
     gpio_set_level(disp->pinmap.cs, 1);
 }
