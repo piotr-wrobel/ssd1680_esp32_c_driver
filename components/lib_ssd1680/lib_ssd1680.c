@@ -100,7 +100,8 @@ static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size
     gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
 
-    trs.length = data_size * 8;
+    cmd_in_ram = 0xFF; //Dummy data
+    trs.length = (data_size * 8);
     trs.rxlength = data_size * 8;
     trs.tx_buffer = NULL;
     trs.rx_buffer = data;
@@ -304,7 +305,7 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
     spi_device_interface_config_t devcfg = {
         .mode = 0,
         //.clock_speed_hz = SPI_MASTER_FREQ_20M,
-		.clock_speed_hz = SPI_MASTER_FREQ_500K,
+		.clock_speed_hz = SPI_MASTER_FREQ_20K,
         .spics_io_num = -1,
         .queue_size = 3,
 		.command_bits = 0,

@@ -13,6 +13,8 @@
 #define SPI_MASTER_FREQ_2M      (80 * 1000 * 1000 / 40)   ///< 4MHz
 #define SPI_MASTER_FREQ_1M      (80 * 1000 * 1000 / 80)   ///< 1MHz
 #define SPI_MASTER_FREQ_500K    (80 * 1000 * 1000 / 160)  ///< 500KHz
+#define SPI_MASTER_FREQ_200K    (80 * 1000 * 1000 / 400)  ///< 200KHz
+#define SPI_MASTER_FREQ_20K    (80 * 1000 * 1000 / 4000)  ///< 20KHz
 
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
