@@ -70,7 +70,7 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
     gpio_set_level(disp->pinmap.cs, 1);
 }
 
-//I have a problem with this function, it stopped working, the controller hangs when receiving data via SPI. I'm looking for a solution.......
+//The controller downloads data from the display memory, but there are errors - it is necessary to check the communication with an oscilloscope
 
 //static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 //{
