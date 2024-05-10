@@ -72,14 +72,14 @@
 #define EPAPER_RES_X	122
 #define EPAPER_RES_Y	250
 
-#define PIN_NUM_MISO 25
-#define PIN_NUM_MOSI 23
-#define PIN_NUM_CLK  19
-#define PIN_NUM_CS   22
+#define PIN_NUM_MISO 25		// D6
+#define PIN_NUM_MOSI 23		// D5
+#define PIN_NUM_CLK  19		// D4
+#define PIN_NUM_CS   22 	// D1
 
-#define PIN_NUM_DC   21
-#define PIN_NUM_RST  18
-#define PIN_NUM_BCKL 5
+#define PIN_NUM_DC   21		// D3
+#define PIN_NUM_RST  18		// DO
+#define PIN_NUM_BCKL 5  	// D2
 
 
 /* FreeRTOS event group to signal when we are connected*/

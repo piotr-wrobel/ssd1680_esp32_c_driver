@@ -58,14 +58,16 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
     gpio_set_level(disp->pinmap.dc, 0);
     gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
-    gpio_set_level(disp->pinmap.cs, 1);
 
-    if (data == NULL || data_size == 0) return;
+    gpio_set_level(disp->pinmap.dc, 1);
+    if (data == NULL || data_size == 0)
+    {
+    	gpio_set_level(disp->pinmap.cs, 1);
+    	return;
+    }
 
     trs.length = data_size * 8;
     trs.tx_buffer = data;
-    gpio_set_level(disp->pinmap.dc, 1);
-    gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
     gpio_set_level(disp->pinmap.cs, 1);
 }
