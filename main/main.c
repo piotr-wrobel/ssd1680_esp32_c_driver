@@ -468,18 +468,18 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 	vTaskDelay(500 / portTICK_PERIOD_MS);
 
-	memcpy(fb_tmp, disp->framebuffer_bw, disp->framebuffer_size);
-	ssd1680_fill(disp, SSD1680_WHITE);
-	print_buffor("Filled by white", disp->framebuffer_bw, 20);
-	print_buffor("From tmp", fb_tmp, 20);
+	//memcpy(fb_tmp, disp->framebuffer_bw, disp->framebuffer_size);
+	//ssd1680_fill(disp, SSD1680_WHITE);
+	//print_buffor("Filled by white", disp->framebuffer_bw, 20);
+	//print_buffor("From tmp", fb_tmp, 20);
 
-	ssd1680_refresh(disp, FAST_FULL_REFRESH);
-	vTaskDelay(500 / portTICK_PERIOD_MS);
+	//ssd1680_refresh(disp, FAST_FULL_REFRESH);
+	//vTaskDelay(500 / portTICK_PERIOD_MS);
 
-	memcpy(disp->framebuffer_bw, fb_tmp, disp->framebuffer_size);
-	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH);
-	vTaskDelay(500 / portTICK_PERIOD_MS);
+	//memcpy(disp->framebuffer_bw, fb_tmp, disp->framebuffer_size);
+	//ssd1680_send_framebuffer(disp);
+	//ssd1680_refresh(disp, FAST_FULL_REFRESH);
+	//vTaskDelay(500 / portTICK_PERIOD_MS);
 	memset(disp->framebuffer_bw, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size );
 	print_buffor("Filled again by white", disp->framebuffer_bw, 20);
 	ssd1680_read_ram(disp, SSD1680_NORMAL, SSD1680_READ_RAM_BW);

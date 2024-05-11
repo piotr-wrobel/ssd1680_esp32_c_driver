@@ -285,7 +285,8 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
     printf("clmns: %d, rows: %d\r\n", disp->clmn_cnt, disp->rows_cnt);
 #endif
 
-    disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
+    //disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
+    disp->framebuffer_size = 64; //for testing purposes
 
     disp->framebuffer_bw = heap_caps_malloc(disp->framebuffer_size, MALLOC_CAP_DMA);
     if (disp->framebuffer_bw == NULL)
@@ -571,6 +572,8 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 				for ( xcurr = x1; xcurr <= x2; xcurr++ )
 				{
 					idx = xcurr + ( ycurr * disp->rows_cnt );
+					if( idx >= disp->framebuffer_size ) return;
+
 					if( ycurr == clmn_start && y1bits > 0 ) // CONDITION 1 (90,270)
 					{
 						uint8_t mb = modify_byte(area, reverse_bits_values, reverse_bits_order, (8 - y1bits), SSD1680_ORDER_231);
@@ -777,6 +780,8 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ ) // CONDITION 1 (0,180)
 				{
 					idx = xcurr + ( ycurr * disp->clmn_cnt );
+					if( idx >= disp->framebuffer_size ) return;
+
 					if( xcurr == clmn_start && x1bits > 0 )
 					{
 						uint8_t mb = modify_byte(area, reverse_bits_values, reverse_bits_order, (8 - x1bits), SSD1680_ORDER_231);
