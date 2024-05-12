@@ -76,7 +76,7 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
 
 //static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 //{
-//    static spi_transaction_t trs;
+//	static spi_transaction_t trs;
 //    cmd_in_ram = cmd;
 //    printf("\r\ndata_size: %d\r\n", data_size);
 //    trs.length = 8 + (data_size * 8);
@@ -91,7 +91,9 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
 
 static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 {
-    static spi_transaction_t trs;
+	uint8_t * fb_tmp = malloc(data_size);
+	memset(fb_tmp, 0xFF, data_size);
+	static spi_transaction_t trs;
     cmd_in_ram = cmd;
     printf("\r\ndata_size: %d\r\n", data_size);
 
@@ -103,13 +105,14 @@ static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size
     spi_device_polling_transmit(disp->spi_device, &trs);
 
     cmd_in_ram = 0xFF; //Dummy data
-    trs.length = (data_size * 8);
+    trs.length = data_size * 8;
     trs.rxlength = data_size * 8;
-    trs.tx_buffer = NULL;
+    trs.tx_buffer = fb_tmp;
     trs.rx_buffer = data;
     gpio_set_level(disp->pinmap.dc, 1);
     spi_device_polling_transmit(disp->spi_device, &trs);
     gpio_set_level(disp->pinmap.cs, 1);
+    free(fb_tmp);
 }
 
 static void ssd1680_hw_reset(ssd1680_t *disp)
@@ -366,6 +369,23 @@ void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t orientati
 
 void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd1680_read_ram_opt_t read_ram_opt)
 {
+
+	switch (disp->orientation)
+    {
+    case SSD1680_90_DEG:
+        ssd1680_set_ram_pos(disp, disp->clmn_cnt - 1, 0);
+        break;
+    case SSD1680_180_DEG:
+        ssd1680_set_ram_pos(disp, disp->clmn_cnt - 1, disp->rows_cnt - 1);
+        break;
+    case SSD1680_270_DEG:
+        ssd1680_set_ram_pos(disp, 0, disp->rows_cnt - 1);
+        break;
+    default: // SSD1680_NORMAL
+        ssd1680_set_ram_pos(disp, 0, 0);
+        break;
+    }
+
 	uint8_t * framebuffer;
 	ssd1680_orientation_t orientation_orig = disp->orientation;
 
@@ -383,7 +403,7 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd168
 	}
 	memset(framebuffer, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size); // For tests
 	printf("\r\nRAM read, phaze 1");
-	ssd1680_write(disp, SSD1680_READ_RAM_OPT, &read_ram_opt, 8);
+	ssd1680_write(disp, SSD1680_READ_RAM_OPT, &read_ram_opt, 1);
 	printf("\r\nRAM read, phaze 2");
 	ssd1680_wait_busy(disp);
 	printf("\r\nRAM read, phaze 3");

@@ -506,7 +506,8 @@ void app_main(void)
 		    .busy = PIN_NUM_BCKL,
 		    .reset = PIN_NUM_RST,
 		    .dc = PIN_NUM_DC,
-		    .cs = PIN_NUM_CS
+		    .cs = PIN_NUM_CS,
+			.mosi = PIN_NUM_MOSI
 	};
 
 	//Initialize NVSPIN_NUM_BCKL
@@ -529,6 +530,7 @@ void app_main(void)
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
         //.max_transfer_sz = PARALLEL_LINES * 320 * 2 + 8
+		.flags = SPICOMMON_BUSFLAG_MASTER,
     };
 
     //Initialize the SPI bus
