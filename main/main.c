@@ -506,8 +506,7 @@ void app_main(void)
 		    .busy = PIN_NUM_BCKL,
 		    .reset = PIN_NUM_RST,
 		    .dc = PIN_NUM_DC,
-		    .cs = PIN_NUM_CS,
-			.mosi = PIN_NUM_MOSI
+		    .cs = PIN_NUM_CS
 	};
 
 	//Initialize NVSPIN_NUM_BCKL

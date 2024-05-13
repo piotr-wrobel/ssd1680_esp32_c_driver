@@ -76,7 +76,6 @@ typedef struct {
     gpio_num_t reset;
     gpio_num_t dc;
     gpio_num_t cs;
-    gpio_num_t mosi;
 } ssd1680_pinmap_t;
 
 typedef struct {

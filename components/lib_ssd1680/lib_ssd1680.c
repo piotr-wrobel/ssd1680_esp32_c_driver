@@ -76,7 +76,7 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
 
 //static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 //{
-//	static spi_transaction_t trs;
+//    static spi_transaction_t trs;
 //    cmd_in_ram = cmd;
 //    printf("\r\ndata_size: %d\r\n", data_size);
 //    trs.length = 8 + (data_size * 8);
@@ -288,8 +288,8 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
     printf("clmns: %d, rows: %d\r\n", disp->clmn_cnt, disp->rows_cnt);
 #endif
 
-    //disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
-    disp->framebuffer_size = 64; //for testing purposes
+    disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
+    //disp->framebuffer_size = 64; //for testing purposes
 
     disp->framebuffer_bw = heap_caps_malloc(disp->framebuffer_size, MALLOC_CAP_DMA);
     if (disp->framebuffer_bw == NULL)
@@ -311,7 +311,7 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
     spi_device_interface_config_t devcfg = {
         .mode = 0,
         //.clock_speed_hz = SPI_MASTER_FREQ_20M,
-		.clock_speed_hz = SPI_MASTER_FREQ_20K,
+		.clock_speed_hz = SPI_MASTER_FREQ_1M,
         .spics_io_num = -1,
         .queue_size = 3,
 		.command_bits = 0,
