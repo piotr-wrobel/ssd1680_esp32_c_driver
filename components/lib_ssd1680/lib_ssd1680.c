@@ -72,27 +72,12 @@ static void ssd1680_write(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, siz
     gpio_set_level(disp->pinmap.cs, 1);
 }
 
-//The controller downloads data from the display memory, but there are errors - it is necessary to check the communication with an oscilloscope......
-
-//static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
-//{
-//    static spi_transaction_t trs;
-//    cmd_in_ram = cmd;
-//    printf("\r\ndata_size: %d\r\n", data_size);
-//    trs.length = 8 + (data_size * 8);
-//    trs.rxlength = data_size * 8;
-//    trs.tx_buffer = &cmd_in_ram;
-//    trs.rx_buffer = data;
-//    gpio_set_level(disp->pinmap.dc, 0);
-//    gpio_set_level(disp->pinmap.cs, 0);
-//    spi_device_polling_transmit(disp->spi_device, &trs);
-//    gpio_set_level(disp->pinmap.cs, 1);
-//}
 
 static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size_t data_size)
 {
-	uint8_t * fb_tmp = malloc(data_size);
-	memset(fb_tmp, 0xFF, data_size);
+	uint8_t * fb_tmp = malloc(data_size + 2);
+	memset(fb_tmp, 0xFF, data_size + 2);
+
 	static spi_transaction_t trs;
     cmd_in_ram = cmd;
     printf("\r\ndata_size: %d\r\n", data_size);
@@ -104,14 +89,15 @@ static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size
     gpio_set_level(disp->pinmap.cs, 0);
     spi_device_polling_transmit(disp->spi_device, &trs);
 
-    cmd_in_ram = 0xFF; //Dummy data
-    trs.length = data_size * 8;
-    trs.rxlength = data_size * 8;
-    trs.tx_buffer = fb_tmp;
-    trs.rx_buffer = data;
+    trs.length = (data_size + 1) * 8;
+    trs.rxlength = (data_size + 1) * 8;
+    trs.tx_buffer = fb_tmp + 1;
+    trs.rx_buffer = fb_tmp;
     gpio_set_level(disp->pinmap.dc, 1);
     spi_device_polling_transmit(disp->spi_device, &trs);
     gpio_set_level(disp->pinmap.cs, 1);
+
+    memcpy(data, fb_tmp + 1, data_size );
     free(fb_tmp);
 }
 
@@ -289,7 +275,7 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 #endif
 
     disp->framebuffer_size = disp->clmn_cnt * disp->rows_cnt;
-    //disp->framebuffer_size = 64; //for testing purposes
+    //disp->framebuffer_size = 32; //for testing purposes
 
     disp->framebuffer_bw = heap_caps_malloc(disp->framebuffer_size, MALLOC_CAP_DMA);
     if (disp->framebuffer_bw == NULL)
