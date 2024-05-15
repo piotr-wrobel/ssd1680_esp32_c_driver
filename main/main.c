@@ -445,6 +445,34 @@ void static fonts_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 }
 
+void static font_orientation_demo(ssd1680_t *disp, ssd1680_color_t color)
+{
+	ssd1680_font_t * font = &font_terminal_9pt;
+
+	ssd1680_change_orientation(disp, SSD1680_270_DEG);
+	ssd1680_display_string(disp, font, 66, 16, "Text orient. test...", color);
+
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+
+	ssd1680_change_orientation(disp, SSD1680_0_DEG);
+	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
+
+	ssd1680_display_string(disp, font, 8, 16, "Text orient. test...", color);
+
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+
+	ssd1680_change_orientation(disp, SSD1680_180_DEG);
+	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
+
+	ssd1680_display_string(disp, font, 8, 16, "Text orient. test...", color);
+
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+
+}
+
 void static print_buffor(char * text, uint8_t * buff, uint8_t lenght)
 {
 	printf("\r\n%s:", text);
@@ -473,7 +501,7 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	memset(disp->framebuffer_bw, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size );
 	print_buffor("Filled again by white", disp->framebuffer_bw, 20);
 	ssd1680_change_orientation(disp, SSD1680_270_DEG);
-	ssd1680_read_ram(disp, SSD1680_270_DEG, SSD1680_READ_RAM_BW);
+	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
 	print_buffor("Readed from RAM", disp->framebuffer_bw, 20);
 
 
@@ -534,10 +562,10 @@ void app_main(void)
     //display_demo_3(ssd1680_disp, SSD1680_BLACK);
     //display_demo_4(ssd1680_disp, SSD1680_BLACK);
     //display_demo_5(ssd1680_disp, SSD1680_BLACK);
-    ram_demo_1(ssd1680_disp, SSD1680_BLACK);
+    //ram_demo_1(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
-
+    font_orientation_demo(ssd1680_disp, SSD1680_BLACK);
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
 
