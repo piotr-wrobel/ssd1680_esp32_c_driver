@@ -353,7 +353,7 @@ void ssd1680_change_orientation(ssd1680_t *disp, ssd1680_orientation_t orientati
 	ssd1680_setup_ram(disp);
 }
 
-void ssd1680_read_ram(ssd1680_t *disp, ssd1680_orientation_t orientation, ssd1680_read_ram_opt_t read_ram_opt)
+void ssd1680_read_ram(ssd1680_t *disp, ssd1680_read_ram_opt_t read_ram_opt)
 {
 
 	switch (disp->orientation)
