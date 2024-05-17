@@ -80,9 +80,9 @@ static void ssd1680_read(ssd1680_t *disp, ssd1680_regmap_t cmd, void *data, size
 
 	static spi_transaction_t trs;
     cmd_in_ram = cmd;
-    printf("\r\ndata_size: %d\r\n", data_size);
 
     trs.length = 8;
+    trs.rxlength = 0;
     trs.tx_buffer = &cmd_in_ram;
     trs.rx_buffer = NULL;
     gpio_set_level(disp->pinmap.dc, 0);
@@ -388,16 +388,10 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_read_ram_opt_t read_ram_opt)
 			break;
 	}
 	memset(framebuffer, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size); // For tests
-	printf("\r\nRAM read, phaze 1");
 	ssd1680_write(disp, SSD1680_READ_RAM_OPT, &read_ram_opt, 1);
-	printf("\r\nRAM read, phaze 2");
 	ssd1680_wait_busy(disp);
-	printf("\r\nRAM read, phaze 3");
 	ssd1680_read(disp, SSD1680_READ_RAM, framebuffer, disp->framebuffer_size);
-	printf("\r\nRAM read, phaze 4");
 	ssd1680_wait_busy(disp);
-	printf("\r\nRAM read, phaze 5");
-	//ssd1680_change_orientation(disp, orientation_orig);
 }
 
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color)

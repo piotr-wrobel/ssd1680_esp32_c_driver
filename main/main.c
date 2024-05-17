@@ -449,29 +449,29 @@ void static font_orientation_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
 	ssd1680_font_t * font = &font_terminal_9pt;
 
-	ssd1680_change_orientation(disp, SSD1680_270_DEG);
-	ssd1680_display_string(disp, font, 66, 16, "Text orient. test...", color);
-	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH);
-
-
 	ssd1680_change_orientation(disp, SSD1680_0_DEG);
-	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
-	ssd1680_display_string(disp, font, 8, 16, "Text orient. test...", color);
-	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH);
-
-
-	ssd1680_change_orientation(disp, SSD1680_180_DEG);
-	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
-	ssd1680_display_string(disp, font, 8, 16, "Text orient. test...", color);
+	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 
 	ssd1680_change_orientation(disp, SSD1680_90_DEG);
 	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
-	ssd1680_display_string(disp, font, 8, 16, "Text orient. test...", color);
+	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+
+
+	ssd1680_change_orientation(disp, SSD1680_180_DEG);
+	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
+	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+
+
+	ssd1680_change_orientation(disp, SSD1680_270_DEG);
+	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
+	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
 	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
