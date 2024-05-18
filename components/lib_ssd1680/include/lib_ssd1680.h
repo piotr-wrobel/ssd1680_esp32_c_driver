@@ -18,7 +18,8 @@
 
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
-  PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
+  //PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
+  PARTIAL_REFRESH = 0xCC,
   FAST_FULL_REFRESH = 0xC7,	/**< Refresh whole screen in a fast way */
   FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
 };
