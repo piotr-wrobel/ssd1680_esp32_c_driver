@@ -352,11 +352,14 @@ ssd1680_t *ssd1680_init_partial(spi_host_device_t spi_host, ssd1680_pinmap_t pin
 {
 	ssd1680_t * ssd1680_disp;
 	ssd1680_disp = ssd1680_init(spi_host, pinmap, res_x, res_y, orientation);
+
 	if (ssd1680_disp)
 	{
 		ssd1680_write(ssd1680_disp, SSD1680_WRITE_LUT, ssd1680_lut_partial, sizeof(ssd1680_lut_partial));
+		return ssd1680_disp;
 	}
-  return NULL;
+
+	return NULL;
 }
 
 void ssd1680_deinit(ssd1680_t *disp)
@@ -406,9 +409,6 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_read_ram_opt_t read_ram_opt)
     }
 
 	uint8_t * framebuffer;
-	ssd1680_orientation_t orientation_orig = disp->orientation;
-
-	//ssd1680_change_orientation(disp, orientation);
 
 	switch(read_ram_opt)
 	{

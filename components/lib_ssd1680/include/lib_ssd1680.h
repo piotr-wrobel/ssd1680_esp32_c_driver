@@ -18,7 +18,7 @@
 
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
-  //PARTIAL_REFRESH = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
+  PARTIAL_REFRESH_OLD = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
   PARTIAL_REFRESH = 0xCC,
   FAST_FULL_REFRESH = 0xC7,	/**< Refresh whole screen in a fast way */
   FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
@@ -111,6 +111,7 @@ typedef struct {
 //} ssd1680_font_t;
 
 ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation);
+ssd1680_t *ssd1680_init_partial(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation);
 void ssd1680_deinit(ssd1680_t* disp);
 
 void ssd1680_sleep(ssd1680_t *disp);
