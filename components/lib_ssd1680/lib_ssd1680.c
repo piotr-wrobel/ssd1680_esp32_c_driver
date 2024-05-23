@@ -55,7 +55,7 @@ static uint8_t ssd1680_lut_partial[] =
   0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x00, 0x00, 0x00,						// 9
 };
 /*
-//Lut research... (2)
+//Lut research... (3)
 ssd16xx: ssd16xxfb@0 {
 			compatible = "solomon,ssd16xxfb";
 			label = "SSD16XX";
