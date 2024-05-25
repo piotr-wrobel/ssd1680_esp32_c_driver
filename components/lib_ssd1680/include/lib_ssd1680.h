@@ -19,7 +19,8 @@
 enum ssd1680_refresh_mode{
   FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
   PARTIAL_REFRESH_OLD = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
-  PARTIAL_REFRESH = 0xCC,
+  ADAFRUIT_REFRESH = 0xF4, 		//Test it ! From ADAFruit driver
+  PARTIAL_REFRESH = 0xCC,		//From WeActStudio driver
   FAST_FULL_REFRESH = 0xC7,	/**< Refresh whole screen in a fast way */
   FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
 };

@@ -316,6 +316,10 @@ static void ssd1680_temp_sensor_ctrl(ssd1680_t *disp, uint8_t tmp_sensor)
 {
 	ssd1680_write(disp, SSD1680_TEMP_SENS_CTRL, &tmp_sensor, sizeof(uint8_t));
 	ssd1680_wait_busy(disp);
+/*	  epd_write_reg(0x1A);
+	  epd_write_data(0x7F);
+	  epd_write_data(0xF0);
+*/
 }
 
 static void ssd1680_init_sequence(ssd1680_t *disp)
