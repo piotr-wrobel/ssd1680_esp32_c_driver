@@ -308,9 +308,9 @@ static void ssd1680_setup_ram(ssd1680_t *disp)
     uint8_t ctrl_1[2] = {0, 0x80};
     ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_1, &ctrl_1, sizeof(ctrl_1));
     ssd1680_wait_busy(disp);
-    uint8_t ctrl_2 = FULL_REFRESH;
-    ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &ctrl_2, sizeof(ctrl_2));
-    ssd1680_wait_busy(disp);
+//    uint8_t ctrl_2 = FULL_REFRESH;
+//    ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &ctrl_2, sizeof(ctrl_2));
+//    ssd1680_wait_busy(disp);
 }
 static void ssd1680_temp_sensor_ctrl(ssd1680_t *disp, uint8_t tmp_sensor)
 {
@@ -322,12 +322,29 @@ static void ssd1680_temp_sensor_ctrl(ssd1680_t *disp, uint8_t tmp_sensor)
 */
 }
 
+static void ssd1680_power_on(ssd1680_t *disp, uint8_t mode)
+{
+	ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &mode, sizeof(mode));
+	ssd1680_wait_busy(disp);
+	ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
+	ssd1680_wait_busy(disp);
+}
+
+static void ssd1680_power_off(ssd1680_t *disp, uint8_t mode)
+{
+	ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &mode, sizeof(mode));
+	ssd1680_wait_busy(disp);
+	ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
+	ssd1680_wait_busy(disp);
+}
+
 static void ssd1680_init_sequence(ssd1680_t *disp)
 {
     ssd1680_setup_gate_driver(disp);
     ssd1680_setup_booster(disp);
     ssd1680_setup_ram(disp);
     ssd1680_temp_sensor_ctrl(disp, TMP_INTERNAL_SENSOR);
+    ssd1680_power_on(disp, SSD1680_TEMPLUTDISP1); //WAS_POWERON_SEQ, SSD1680_TEMPLUTDISP2, SSD1680_TEMPLUTDISP1
 }
 
 ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation)
@@ -427,7 +444,8 @@ void ssd1680_deinit(ssd1680_t *disp)
 
 void ssd1680_sleep(ssd1680_t *disp)
 {
-    uint8_t mode = 0b01;
+    ssd1680_power_off(disp, WAS_POWEROFF_SEQ);
+	uint8_t mode = 0b01;
     ssd1680_write(disp, SSD1680_DEEP_SLEEP_MODE, &mode, 1);
 }
 
@@ -820,7 +838,7 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 			//			{
 			//
 			//				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
-			//				{
+			//				{epd_power_off
 			//					idx = xcurr + ( ycurr * disp->clmn_cnt );
 			//					if( xcurr == clmn_start && x1bits > 0 )
 			//					{

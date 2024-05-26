@@ -16,13 +16,18 @@
 #define SPI_MASTER_FREQ_200K    (80 * 1000 * 1000 / 400)  ///< 200KHz
 #define SPI_MASTER_FREQ_20K    (80 * 1000 * 1000 / 4000)  ///< 20KHz
 
-enum ssd1680_refresh_mode{
-  FULL_REFRESH = 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
-  PARTIAL_REFRESH_OLD = 0xFF,	/**< Refresh updated region in a slow robust flickery way */
-  ADAFRUIT_REFRESH = 0xF4, 		//Test it ! From ADAFruit driver
-  PARTIAL_REFRESH = 0xCC,		//From WeActStudio driver
-  FAST_FULL_REFRESH = 0xC7,	/**< Refresh whole screen in a fast way */
-  FAST_PARTIAL_REFRESH = 0xCF	/**< Refresh updated region in a fast way */
+enum ssd1680_display_update_seq{
+  WAS_POWEROFF_SEQ 		= 0x83,		/**< From WeActStudio driver */
+  SSD1680_TEMPLUTDISP1	= 0xB1,
+  SSD1680_TEMPLUTDISP2	= 0xB9,
+  FAST_FULL_REFRESH 	= 0xC7,		/**< Refresh whole screen in a fast way */
+  WAS_PARTIAL_REFRESH 	= 0xCC,		/**< From WeActStudio driver */
+  FAST_PARTIAL_REFRESH 	= 0xCF,		/**< Refresh updated region in a fast way */
+
+  ADAFRUIT_REFRESH 		= 0xF4, 	/**< Test it ! From ADAFruit driver */
+  FULL_REFRESH 			= 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
+  WAS_POWERON_SEQ 		= 0xF8,		/**< From WeActStudio driver */
+  PARTIAL_REFRESH	 	= 0xFF,		/**< Refresh updated region in a slow robust flickery way */
 };
 
 enum ssd1680_tmp_sensor_ctrl{
