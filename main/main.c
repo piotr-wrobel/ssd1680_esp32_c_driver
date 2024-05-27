@@ -491,17 +491,17 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
 	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_c64_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
-	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
+	ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FULL_REFRESH);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
 	ssd1680_set_area(disp, 0, 0, 121, 249, image_eye_122_250, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
 	ssd1680_send_framebuffer(disp);
-	//ssd1680_set_refresh_window(disp, 0, 0, 121, 125);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 }
 
 void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
