@@ -316,10 +316,6 @@ static void ssd1680_temp_sensor_ctrl(ssd1680_t *disp, uint8_t tmp_sensor)
 {
 	ssd1680_write(disp, SSD1680_TEMP_SENS_CTRL, &tmp_sensor, sizeof(uint8_t));
 	ssd1680_wait_busy(disp);
-/*	  epd_write_reg(0x1A);
-	  epd_write_data(0x7F);
-	  epd_write_data(0xF0);
-*/
 }
 
 static void ssd1680_power_on(ssd1680_t *disp, uint8_t mode)
@@ -555,18 +551,6 @@ void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, u
 	        }
 	    }
 }
-//static uint8_t return_byte(uint8_t * byte, ssd1680_reverse_t reverse_bits_values, ssd1680_reverse_t reverse_bits_order)
-//{
-//	uint8_t tmp = *byte;
-//
-//	if(reverse_bits_order == SSD1680_REVERSE_TRUE)
-//		tmp = ((tmp * 0x0802LU & 0x22110LU) | (tmp * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-//
-//	if(reverse_bits_values == SSD1680_REVERSE_TRUE)
-//		return ~tmp;
-//	else
-//		return tmp;
-//}
 
 static uint8_t modify_byte(uint8_t * byte, ssd1680_reverse_t rbv_condition, ssd1680_reverse_t rbo_condition, int8_t shift_value, ssd1680_order_t modify_order)
 {
@@ -832,40 +816,6 @@ void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, ui
 					}
 				}
 			}
-
-
-			//			for ( ycurr = y1; ycurr <= y2; ycurr++)
-			//			{
-			//
-			//				for ( xcurr = clmn_start; xcurr <= clmn_stop; xcurr++ )
-			//				{epd_power_off
-			//					idx = xcurr + ( ycurr * disp->clmn_cnt );
-			//					if( xcurr == clmn_start && x1bits > 0 )
-			//					{
-			//
-			//						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & ~(BitsSetTable[x1bits]) ) | (return_byte(area, reverse_bits_values, reverse_bits_order) >> (8 - x1bits));
-			//
-			//					} else if ( xcurr == clmn_stop && x2bits > 0 && x1bits > 0)
-			//					{
-			//
-			//						disp->framebuffer_bw[idx] = (return_byte(area - 1, reverse_bits_values, reverse_bits_order) << x1bits) | (return_byte(area, reverse_bits_values, reverse_bits_order) & ~(BitsSetTable[8 - x2bits])) >> x1bits;
-			//
-			//					} else if ( xcurr == clmn_stop && x2bits > 0)
-			//					{
-			//
-			//						disp->framebuffer_bw[idx] = ( disp->framebuffer_bw[idx] & BitsSetTable[8 - x2bits] ) | (return_byte(area, reverse_bits_values, reverse_bits_order) & ~(BitsSetTable[8 - x2bits]));
-			//						area++;
-			//
-			//					} else
-			//					{
-			//						if( x1bits > 0 )
-			//							disp->framebuffer_bw[idx] = (return_byte(area, reverse_bits_values, reverse_bits_order) << x1bits) | (return_byte(area + 1, reverse_bits_values, reverse_bits_order) >> (8 - x1bits));
-			//						elseidx
-			//							disp->framebuffer_bw[idx] = return_byte(area, reverse_bits_values, reverse_bits_order);
-			//						area++;
-			//					}
-			//				}
-			//			}
 		break;
 		default: // SSD1680_NORMAL || SSD1680_180_DEG
 			uint8_t x1bits, x2bits;
@@ -1133,11 +1083,9 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 	{
 		case SSD1680_90_DEG: case SSD1680_270_DEG:
 			res_x = disp->res_y;
-			//res_y = disp->res_x;
 		break;
 		default:
 			res_x = disp->res_x;
-			//res_y = disp->res_y;
 	}
 
 
