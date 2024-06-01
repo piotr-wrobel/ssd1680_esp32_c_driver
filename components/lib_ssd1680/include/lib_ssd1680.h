@@ -16,7 +16,7 @@
 #define SPI_MASTER_FREQ_200K    (80 * 1000 * 1000 / 400)  ///< 200KHz
 #define SPI_MASTER_FREQ_20K    (80 * 1000 * 1000 / 4000)  ///< 20KHz
 
-enum ssd1680_display_update_seq{
+enum ssd1680_display_update_mode {
   WAS_POWEROFF_SEQ 		= 0x83,		/**< From WeActStudio driver */
   SSD1680_TEMPLUTDISP1	= 0xB1,
   SSD1680_TEMPLUTDISP2	= 0xB9,
@@ -28,7 +28,15 @@ enum ssd1680_display_update_seq{
   FULL_REFRESH 			= 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
   WAS_POWERON_SEQ 		= 0xF8,		/**< From WeActStudio driver */
   PARTIAL_REFRESH	 	= 0xFF,		/**< Refresh updated region in a slow robust flickery way */
+  NONE					= 0xFF		// For security reason has been set to PARTIAL_REFRESH mode
 };
+
+typedef enum ssd1680_refresh_mode {
+	MASTER_ACTIVATION_ONLY	= 0x01,
+	UPDATE_CTRL_ONLY 			= 0x02,
+	BOTH_MODE				= 0x03,
+	OFF 					= 0x00
+} ssd1680_refresh_mode_t;
 
 enum ssd1680_tmp_sensor_ctrl{
 	TMP_INTERNAL_SENSOR = 0x80,
@@ -133,5 +141,5 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 void ssd1680_send_framebuffer(ssd1680_t *disp);
 
 void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-void ssd1680_refresh(ssd1680_t *disp, uint8_t mode);
+void ssd1680_refresh(ssd1680_t *disp, uint8_t update_mode, ssd1680_refresh_mode_t refresh_mode);
 

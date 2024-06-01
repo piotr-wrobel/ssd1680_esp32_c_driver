@@ -356,7 +356,7 @@ ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uin
 
     ssd1680_init_sequence(disp);
     ssd1680_fill(disp, SSD1680_WHITE);
-    ssd1680_refresh(disp, FULL_REFRESH);
+    ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE);
 
     return disp;
 
@@ -1122,15 +1122,34 @@ void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint1
     }
 }
 
-void ssd1680_refresh(ssd1680_t *disp, uint8_t mode)
+void ssd1680_refresh(ssd1680_t *disp, uint8_t update_mode, ssd1680_refresh_mode_t refresh_mode)
 {
 #ifdef DEBUG
 	int64_t t = get_time();
 #endif
-    ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &mode, sizeof(mode));
-    ssd1680_wait_busy(disp);
-    ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
-    ssd1680_wait_busy(disp);
+
+	switch(refresh_mode)
+	{
+		case BOTH_MODE:
+			ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &update_mode, sizeof(update_mode));
+			ssd1680_wait_busy(disp);
+			ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
+			ssd1680_wait_busy(disp);
+		break;
+
+		case UPDATE_CTRL_ONLY:
+			ssd1680_write(disp, SSD1680_DISP_UPDATE_CTRL_2, &update_mode, sizeof(update_mode));
+			ssd1680_wait_busy(disp);
+		break;
+
+		case MASTER_ACTIVATION_ONLY:
+			ssd1680_write(disp, SSD1680_MASTER_ACTIVATION, NULL, 0);
+			ssd1680_wait_busy(disp);
+		break;
+
+		default:
+		break;
+	}
 
 #ifdef DEBUG
     t = get_time() - t;
