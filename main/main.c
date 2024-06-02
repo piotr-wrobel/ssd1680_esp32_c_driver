@@ -506,14 +506,6 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, PARTIAL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
-	//ssd1680_fill(disp, SSD1680_WHITE);
-	//ssd1680_set_area(disp, 0, 0, 121, 249, image_test_122_250, sizeof(image_test_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
-	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
-	//ssd1680_send_framebuffer(disp);
-	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
-	//ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
-
-	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
 	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_c64_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
@@ -522,6 +514,15 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, NONE, MASTER_ACTIVATION_ONLY); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 	ssd1680_send_framebuffer(disp);
 	ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+
+
+	//vTaskDelay(3000 / portTICK_PERIOD_MS);
+	ssd1680_fill(disp, SSD1680_WHITE);
+	ssd1680_set_area(disp, 0, 0, 121, 249, image_eye_122_250, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
+	ssd1680_send_framebuffer(disp);
+	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
+	ssd1680_refresh(disp, PARTIAL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 }
 
 void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
@@ -595,8 +596,8 @@ void app_main(void)
     //uint8_t ssd1680_orientation = SSD1680_90_DEG;
     //uint8_t ssd1680_orientation = SSD1680_180_DEG;
     //uint8_t ssd1680_orientation = SSD1680_270_DEG;
-    //ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
-    ssd1680_disp = ssd1680_init_partial(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
+    ssd1680_disp = ssd1680_init(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
+    //ssd1680_disp = ssd1680_init_partial(spi_host, ssd1680_pinmap, EPAPER_RES_X, EPAPER_RES_Y, ssd1680_orientation);
 
 
     //display_demo_1(ssd1680_disp, SSD1680_BLACK);
