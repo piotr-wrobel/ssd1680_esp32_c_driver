@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-//#include "oko_122_250.h"
-//#include "c64_122_250.h"
-//#include "test_ram_122_250.h"
 
 static unsigned char header_data[] = {
 	1,1,1,1,1,0,0,0,1,1,1,0,0,0,1,1,
