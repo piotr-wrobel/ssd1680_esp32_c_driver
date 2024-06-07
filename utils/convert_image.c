@@ -3,26 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned char header_data[] = {
-	1,1,1,1,1,0,0,0,1,1,1,0,0,0,1,1,
-	1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,0,0,0,1,1,1,0,0,0,1,1,
-	1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,
-	};
-
-
 //~ unsigned char (* wsk)[250];
 unsigned char (* wsk)[122];
 
@@ -46,14 +26,51 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	rewind(wp);
-	int width;
-	char word[255];
+	int width = 0, height = 0, data = 0, data_cnt = 0, pixels = 0;
+	char word[255],phraze1[255],phraze2[255];
 	//while()
-	if(fscanf(wp, "= %d;", &width) == 1)
+	while(fscanf(wp, "%s", phraze1) == 1)
 	{
-		printf("Width: %d\n",width);
-	} else
-		printf("Pattern not exist\n");
+		if(!strcmp(phraze1,"width") && fscanf(wp,"%s",phraze1) && !strcmp(phraze1,"="))
+		{
+			fscanf(wp,"%d",&width);
+		}
+		if(!strcmp(phraze1,"height") && fscanf(wp,"%s",phraze1) && !strcmp(phraze1,"="))
+		{
+			fscanf(wp,"%d",&height);
+		}
+
+		if(!strcmp(phraze1,"header_data[]") && fscanf(wp,"%s",phraze1) && !strcmp(phraze1,"=") && fscanf(wp,"%s",phraze1) && !strcmp(phraze1,"{"))
+		{
+
+			if(width > 0 && height > 0)
+			{
+				pixels = width * height;
+				printf("Image size: %d x %d, pixels: %d\n", width, height, pixels);
+
+				printf("Found data !\n");
+				for(int i = 0; i < pixels; i++)
+				{
+					if (fscanf(wp,"%d,", &data) == 1)
+						printf("%d",data);
+				}
+//				while(fscanf(wp,"%d", &data) == 1)
+//				{
+//					printf("%d",data);
+//					data_cnt++;
+//					if(fscanf(wp,"%s", phraze1) == 1 && !strcmp(phraze1,"}"))
+//							break;
+//				}
+//				printf("\nFound %d pixels\n", data_cnt);
+			}
+		}
+   }
+
+	if(width > 0 && height > 0)
+		printf("\nImage size: %d x %d\n", width, height);
+	else
+		printf("Patterns not exist\n");
+
 //~ wsk = (unsigned char (*)[250])header_data;
 
 
@@ -97,7 +114,7 @@ int main(int argc, char *argv[])
 //~ }
 
 
-wsk = (unsigned char (*)[122])header_data;
+//wsk = (unsigned char (*)[122])header_data;
 
 
 uint8_t dst_byte = 0,byte = 0,counter = 1;
