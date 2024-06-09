@@ -2,7 +2,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
+char * strtoupper(char * str)
+{
+//	while(*str != 0)
+//	{
+//		*str = toupper(*str);
+//		str++;
+//	}
+
+	return str;
+}
 
 int main(int argc, char *argv[])
 {
@@ -13,9 +24,10 @@ int main(int argc, char *argv[])
 	FILE * input_file;
 	FILE * output_file;
 
-	if(argc != 3)
+	if(argc < 3 || argc > 4)
 	{
-		printf("Use: %s gimp_indexed_image_as_c_header_file.h table_name\n", argv[0]);
+		printf("Use: %s gimp_indexed_image_as_c_header_file.h table_name [OPTIONAL_HEADER_TEMPLATE]\r\n", argv[0]);
+		printf("OPTIONAL_HEADER_TEMPLATE - if omitted, it takes the value: COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_TABLE_NAME_WIDTH_HEIGHT_H_\r\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -45,7 +57,7 @@ int main(int argc, char *argv[])
 
 	if ((input_file = fopen(argv[1], "r")) == NULL)
 	{
-		printf("Cannot open file %s\n", argv[1]);
+		printf("Cannot open file %s\r\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
 	rewind(input_file);
@@ -79,7 +91,7 @@ int main(int argc, char *argv[])
 		if(!strcmp(phraze1,"header_data[]") && fscanf(input_file,"%s",phraze1) && !strcmp(phraze1,"=") && fscanf(input_file,"%s",phraze1) && !strcmp(phraze1,"{"))
 		{
 
-			printf("Found data !\n");
+			printf("Found data !\r\n");
 			if(width > 0 && height > 0)
 			{
 				pixels = width * height;
@@ -89,7 +101,7 @@ int main(int argc, char *argv[])
 					printf("Cannot allocate memory!\r\n");
 					exit(EXIT_FAILURE);
 				}
-				printf("Image size: %d x %d, pixels: %d\n", width, height, pixels);
+				printf("Image size: %d x %d, pixels: %d\r\n", width, height, pixels);
 
 				for(int i = 0; i < pixels; i++)
 				{
@@ -115,7 +127,7 @@ int main(int argc, char *argv[])
 
 	uint8_t (* wsk)[width] = (uint8_t (*)[width])buff;
 
-	char output_file_name[255], strbuff[20];
+	char output_file_name[255], strbuff[255];
 	strcpy(output_file_name, input_path);
 	strcat(output_file_name, "image_");
 	strcat(output_file_name, table_name);
@@ -129,10 +141,21 @@ int main(int argc, char *argv[])
 	uint8_t dst_byte = 0,byte = 0,counter = 1;
 	if ((output_file = fopen(output_file_name, "w+")) == NULL)
 	{
-		printf("Cannot open/create file %s\n", output_file_name);
+		printf("Cannot open/create file %s\r\n", output_file_name);
 		exit(EXIT_FAILURE);
 	}
-	fprintf(output_file, "#include <stdint.h>\r\n\r\n");
+
+	if( argc == 4 )
+	{
+		fprintf(output_file, "#ifndef %s_%s_%d_%d_H_\r\n", strtoupper(argv[3]), strtoupper(table_name), width, height);
+		fprintf(output_file, "#define %s_%s_%d_%d_H_\r\n", strtoupper(argv[3]), strtoupper(table_name), width, height);
+	} else
+	{
+		fprintf(output_file, "#ifndef COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_%s_%d_%d_H_\r\n", strtoupper(table_name), width, height);
+		fprintf(output_file, "#define COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_%s_%d_%d_H_\r\n", strtoupper(table_name), width, height);
+	}
+
+	fprintf(output_file, "\r\n#include <stdint.h>\r\n\r\n");
 	fprintf(output_file, "uint8_t image_%s_%d_%d[] =\r\n{\r\n", table_name, width, height);
 
 	for(int j = 0; j < height + 1; j++)
@@ -171,11 +194,18 @@ int main(int argc, char *argv[])
 		}
 		wsk++;
 	}
-	fprintf(output_file, "}\r\n");
+	fprintf(output_file, "}\r\n\r\n");
+	if( argc == 4 )
+	{
+		fprintf(output_file, "#endif /* %s_%s_%d_%d_H_ */\r\n", strtoupper(argv[3]), strtoupper(table_name), width, height);
+	} else
+	{
+		fprintf(output_file, "#endif /* COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_%s_%d_%d_H_ */\r\n", strtoupper(table_name), width, height);
+	}
 
 	free(buff);
 
 	if( fclose(output_file) != 0 )
-		printf("Cannot close output file file!\n");
+		printf("Cannot close output file file!\r\n");
 
 } 
