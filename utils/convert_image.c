@@ -6,11 +6,24 @@
 
 char * strtoupper(char * str)
 {
-//	while(*str != 0)
-//	{
-//		*str = toupper(*str);
-//		str++;
-//	}
+	char * tmp = str;
+	while(*tmp != 0)
+	{
+		*tmp = toupper(*tmp);
+		tmp++;
+	}
+
+	return str;
+}
+
+char * strtolower(char * str)
+{
+	char * tmp = str;
+	while(*tmp != 0)
+	{
+		*tmp = tolower(*tmp);
+		tmp++;
+	}
 
 	return str;
 }
@@ -130,7 +143,7 @@ int main(int argc, char *argv[])
 	char output_file_name[255], strbuff[255];
 	strcpy(output_file_name, input_path);
 	strcat(output_file_name, "image_");
-	strcat(output_file_name, table_name);
+	strcat(output_file_name, strtolower(table_name));
 	strcat(output_file_name, "_");
 	sprintf(strbuff,"%d",width);
 	strcat(output_file_name, strbuff);
@@ -156,7 +169,7 @@ int main(int argc, char *argv[])
 	}
 
 	fprintf(output_file, "\r\n#include <stdint.h>\r\n\r\n");
-	fprintf(output_file, "uint8_t image_%s_%d_%d[] =\r\n{\r\n", table_name, width, height);
+	fprintf(output_file, "uint8_t image_%s_%d_%d[] =\r\n{\r\n", strtolower(table_name), width, height);
 
 	for(int j = 0; j < height + 1; j++)
 	{
