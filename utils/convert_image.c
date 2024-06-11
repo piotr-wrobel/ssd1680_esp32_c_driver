@@ -168,12 +168,17 @@ int main(int argc, char *argv[])
 		fprintf(output_file, "#define COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_%s_%d_%d_H_\r\n", strtoupper(table_name), width, height);
 	}
 
-	fprintf(output_file, "\r\n#include <stdint.h>\r\n\r\n");
-	fprintf(output_file, "uint8_t image_%s_%d_%d[] =\r\n{\r\n", strtolower(table_name), width, height);
+	fprintf(output_file, "\r\n#include <stdint.h>\r\n");
+	fprintf(output_file, "#include \"bitmap_type.h\"\r\n\r\n");
+	fprintf(output_file, "ssd1680_bitmap_t image_%s_%d_%d = {\r\n", strtolower(table_name), width, height);
+	fprintf(output_file, "\t.width = %d,\r\n", width);
+	fprintf(output_file, "\t.height = %d,\r\n", height);
+	fprintf(output_file, "\t.data_size = %d,\r\n", ((width / 8) + 1) * height);
+	fprintf(output_file, "\t.data = {\r\n");
 
 	for(int j = 0; j < height + 1; j++)
 	{
-		fprintf(output_file, "\t//y = %d\r\n\t",j);
+		fprintf(output_file, "\t\t//y = %d\r\n\t\t",j);
 		for(int i = 0; i < width; i++)
 		{
 			byte = (*wsk)[i];
@@ -194,7 +199,7 @@ int main(int argc, char *argv[])
 
 				if(counter == 8)
 				{
-					fprintf(output_file, "\r\n\t");
+					fprintf(output_file, "\r\n\t\t");
 					counter = 0;
 				}
 				counter++;
@@ -207,7 +212,8 @@ int main(int argc, char *argv[])
 		}
 		wsk++;
 	}
-	fprintf(output_file, "}\r\n\r\n");
+	fprintf(output_file, "\t}\r\n");
+	fprintf(output_file, "};\r\n\r\n");
 	if( argc == 4 )
 	{
 		fprintf(output_file, "#endif /* %s_%s_%d_%d_H_ */\r\n", strtoupper(argv[3]), strtoupper(table_name), width, height);
