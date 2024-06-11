@@ -305,24 +305,24 @@ void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 {
 	ssd1680_fill(disp, SSD1680_WHITE);
 	uint8_t counter = 0;
-	uint8_t * image_pointer;
+	ssd1680_bitmap_t * image_pointer;
 	while(1)
 	{
 		switch (counter++)
 		{
 			case 0:
-				image_pointer = image_test_122_250;
+				image_pointer = &image_test_122_250;
 				break;
 			case 1:
-				image_pointer = image_eye_122_250;
+				image_pointer = &image_eye_122_250;
 				break;
 			case 2:
 			default:
-				image_pointer = image_c64_122_250;
+				image_pointer = &image_c64_122_250;
 		}
 		if(counter > 2) counter = 0;
 
-		ssd1680_set_area(disp, 0, 0, 121, 249, image_pointer, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+		ssd1680_set_area(disp, 0, 0, 0 + image_pointer->width - 1, 0 + image_pointer->height - 1, (uint8_t *)image_pointer->data, image_pointer->data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 		ssd1680_send_framebuffer(disp);
 		ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
@@ -490,7 +490,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
-	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_c64_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_c64_122_250.width - 1, 0 + image_c64_122_250.height - 1, (uint8_t *)&image_c64_122_250.data, image_c64_122_250.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
@@ -499,7 +499,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
-	ssd1680_set_area(disp, 0, 0, 121, 249, image_eye_122_250, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_eye_122_250.width - 1, 0 + image_eye_122_250.height - 1, (uint8_t *)&image_eye_122_250.data, image_eye_122_250.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
@@ -507,7 +507,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
-	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_c64_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_c64_122_250.width - 1, 0 + image_c64_122_250.height - 1, (uint8_t *)&image_c64_122_250.data, image_c64_122_250.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
 	//ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
@@ -518,7 +518,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
-	ssd1680_set_area(disp, 0, 0, 121, 249, image_eye_122_250, sizeof(image_eye_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0,  0 + image_eye_122_250.width - 1, 0 + image_eye_122_250.height - 1, (uint8_t *)&image_eye_122_250.data, image_eye_122_250.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
@@ -529,7 +529,7 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 {
 	ssd1680_fill(disp, SSD1680_WHITE);
 
-	ssd1680_set_area(disp, 0, 0, 121, 249, image_c64_122_250, sizeof(image_c64_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_c64_122_250.width - 1, 0 + image_c64_122_250.height - 1, (uint8_t *)&image_c64_122_250.data, image_c64_122_250.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	//ssd1680_set_area(disp, 0, 0, 121, 249, image_test_ram_122_250, sizeof(image_test_ram_122_250), SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 
 	print_buffor("Before send", disp->framebuffer_bw, 20);

@@ -8,9 +8,13 @@
 #ifndef COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_TEST_RAM_122_250_H_
 #define COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_TEST_RAM_122_250_H_
 #include <stdint.h>
+#include "bitmap_type.h"
 
-uint8_t image_test_ram_122_250[] =
-{
+ssd1680_bitmap_t image_test_ram_122_250 = {
+	.width = 122,
+	.height = 250,
+	.data_size = 4000,
+	.data = {
 		//y = 0
 		0x1f, 0xc7, 0x03, 0xe0, 0x25, 0x52, 0x18, 0xa2,
 		0xc5, 0xff, 0xd7, 0x83, 0x38, 0x00, 0xff, 0x03,
@@ -1010,6 +1014,7 @@ uint8_t image_test_ram_122_250[] =
 		//y = 249
 		0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03,
+	}
 };
 
 

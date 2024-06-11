@@ -8,6 +8,7 @@
 #include <driver/gpio.h>
 
 #include "font_type.h"
+#include "bitmap_type.h"
 
 #define SPI_MASTER_FREQ_4M      (80 * 1000 * 1000 / 20)   ///< 8MHz
 #define SPI_MASTER_FREQ_2M      (80 * 1000 * 1000 / 40)   ///< 4MHz
@@ -135,7 +136,7 @@ void ssd1680_read_ram(ssd1680_t *disp, ssd1680_read_ram_opt_t read_ram_opt);
 void ssd1680_fill(ssd1680_t *disp, ssd1680_color_t color);
 void ssd1680_set_pixel(ssd1680_t *disp, uint16_t x, uint16_t y, ssd1680_color_t color);
 void ssd1680_draw_line(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, ssd1680_color_t color); //Bresenham’s Line Drawing Algorithm
-void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_byte, ssd1680_reverse_t reverse_bits);
+void ssd1680_set_area(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t * area, uint16_t area_size, ssd1680_color_t color, ssd1680_reverse_t reverse_byte, ssd1680_reverse_t reverse_bits);
 uint16_t ssd1680_display_char(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x, uint16_t y, uint8_t character, ssd1680_color_t color);
 ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, uint16_t x, uint16_t y, char * string, ssd1680_color_t color);
 void ssd1680_send_framebuffer(ssd1680_t *disp);
