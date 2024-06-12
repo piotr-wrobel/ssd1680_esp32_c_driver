@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 	input_path_ptr = strrchr(input_file_name,'/');
 	if(input_path_ptr != NULL)
 	{
-		//printf("%d,%d\r\n",(int)input_path_ptr,(int)input_file_name);
 		printf("Path length: %d\r\n", (int)(input_path_ptr - input_file_name + 1));
 		strncpy(input_path, input_file_name, (int)(input_path_ptr - input_file_name + 1));
+		input_path[input_path_ptr - input_file_name + 1] = '\0';
 	} else
 	{
 		input_path[0] = '\0';
@@ -80,15 +80,8 @@ int main(int argc, char *argv[])
 	int table_name_length = strlen(argv[2]);
 	if(table_name_length > 10) table_name_length = 10;
 	printf("table_name_length: %d\r\n", table_name_length);
-	strncpy(table_name, argv[2], table_name_length + 1);
-
-
-
-
-//	printf("output: %s\r\n", argv[2]);
-//	printf("table: %s\r\n", argv[3]);
-
-
+	strncpy(table_name, argv[2], table_name_length);
+	table_name[table_name_length + 1] = '\0';
 
 	while(fscanf(input_file, "%s", phraze1) == 1)
 	{
@@ -133,6 +126,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
 	if( fclose(input_file) != 0 )
 		printf("Cannot close input file!\r\n");
 
