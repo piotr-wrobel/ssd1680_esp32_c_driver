@@ -4,6 +4,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define VERSION "v0.1"
+
 char * strtoupper(char * str)
 {
 	char * tmp = str;
@@ -39,8 +41,11 @@ int main(int argc, char *argv[])
 
 	if(argc < 3 || argc > 4)
 	{
-		printf("Use: %s gimp_indexed_image_as_c_header_file.h table_name [OPTIONAL_HEADER_TEMPLATE]\r\n", argv[0]);
-		printf("OPTIONAL_HEADER_TEMPLATE - if omitted, it takes the value: COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_TABLE_NAME_WIDTH_HEIGHT_H_\r\n");
+		printf("\r\n*** Image conventer from Gimp 1bit indexed mode to lib_ssd1680 format, version ");
+		printf(VERSION);
+		printf(" ***\r\n\r\n");
+		printf("Use: %s gimp_indexed_image_as_c_header_file.h table_name [OPTIONAL_HEADER_TEMPLATE]\r\n\r\n", argv[0]);
+		printf("OPTIONAL_HEADER_TEMPLATE - if omitted, it takes the value: COMPONENTS_LIB_SSD1680_INCLUDE_BITMAPS_TABLE_NAME_WIDTH_HEIGHT_H_\r\n\r\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -51,21 +56,19 @@ int main(int argc, char *argv[])
 	}
 
 
-	printf("input: %s\r\n", argv[1]);
 	char input_file_name[255], input_path[255];
 	char * input_path_ptr;
 	strncpy(input_file_name, argv[1], strlen(argv[1]) + 1);
 	input_path_ptr = strrchr(input_file_name,'/');
 	if(input_path_ptr != NULL)
 	{
-		printf("Path length: %d\r\n", (int)(input_path_ptr - input_file_name + 1));
 		strncpy(input_path, input_file_name, (int)(input_path_ptr - input_file_name + 1));
 		input_path[input_path_ptr - input_file_name + 1] = '\0';
 	} else
 	{
-		input_path[0] = '\0';
+		strcpy(input_path,"./");
 	}
-	printf("Path: %s\r\n", input_path);
+	printf("Data path: %s\r\n", input_path);
 
 
 	if ((input_file = fopen(argv[1], "r")) == NULL)
@@ -79,7 +82,6 @@ int main(int argc, char *argv[])
 	char table_name[11];
 	int table_name_length = strlen(argv[2]);
 	if(table_name_length > 10) table_name_length = 10;
-	printf("table_name_length: %d\r\n", table_name_length);
 	strncpy(table_name, argv[2], table_name_length);
 	table_name[table_name_length + 1] = '\0';
 
@@ -97,7 +99,7 @@ int main(int argc, char *argv[])
 		if(!strcmp(phraze1,"header_data[]") && fscanf(input_file,"%s",phraze1) && !strcmp(phraze1,"=") && fscanf(input_file,"%s",phraze1) && !strcmp(phraze1,"{"))
 		{
 
-			printf("Found data !\r\n");
+			printf("Image data found!\r\n");
 			if(width > 0 && height > 0)
 			{
 				pixels = width * height;
@@ -111,11 +113,7 @@ int main(int argc, char *argv[])
 
 				for(int i = 0; i < pixels; i++)
 				{
-					if (fscanf(input_file,"%d,", &bit) == 1)
-					{
-						//printf("%d",bit);
-
-					} else
+					if (fscanf(input_file,"%d,", &bit) != 1)
 						bit = 0;
 					buff[i] = bit;
 				}
@@ -130,8 +128,6 @@ int main(int argc, char *argv[])
 	if( fclose(input_file) != 0 )
 		printf("Cannot close input file!\r\n");
 
-	printf("\r\n");
-
 	uint8_t (* wsk)[width] = (uint8_t (*)[width])buff;
 
 	char output_file_name[255], strbuff[255];
@@ -145,12 +141,13 @@ int main(int argc, char *argv[])
 	sprintf(strbuff,"%d",height);
 	strcat(output_file_name, strbuff);
 	strcat(output_file_name, ".h");
-	uint8_t dst_byte = 0,byte = 0,counter = 1;
+	uint8_t dst_byte = 0, byte = 0, counter = 0;
 	if ((output_file = fopen(output_file_name, "w+")) == NULL)
 	{
 		printf("Cannot open/create file %s\r\n", output_file_name);
 		exit(EXIT_FAILURE);
-	}
+	} else
+		printf("Output file %s\r\n", output_file_name);
 
 	if( argc == 4 )
 	{
@@ -191,12 +188,11 @@ int main(int argc, char *argv[])
 				fprintf(output_file, "0x%.2x, ",dst_byte);
 				dst_byte = 0;
 
-				if(counter == 8)
+				if(counter++ == 7)
 				{
 					fprintf(output_file, "\r\n\t\t");
 					counter = 0;
 				}
-				counter++;
 
 				if(i == width - 1)
 				{
@@ -204,6 +200,7 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
+		counter = 0;
 		wsk++;
 	}
 	fprintf(output_file, "\t}\r\n");
@@ -221,4 +218,6 @@ int main(int argc, char *argv[])
 	if( fclose(output_file) != 0 )
 		printf("Cannot close output file file!\r\n");
 
+	printf("Done !\r\n\r\n");
+	exit(EXIT_SUCCESS);
 } 
