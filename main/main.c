@@ -29,6 +29,8 @@
 #include "c64_122_250.h"
 #include "test_122_250.h"
 #include "test_ram_122_250.h"
+#include "image_sun_1_70_66.h"
+#include "image_cloud_2_70_59.h"
 
 /* The examples use WiFi configuration that you can set via project configuration menu
 
@@ -552,6 +554,14 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
 }
 
+void static small_images_demo(ssd1680_t *disp, ssd1680_color_t color)
+{
+	ssd1680_fill(disp, SSD1680_WHITE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_sun_1_70_66.width - 1, 0 + image_sun_1_70_66.height - 1, (uint8_t *)&image_sun_1_70_66.data, image_sun_1_70_66.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 178, 0 + image_cloud_2_70_59.width - 1, 178 + image_cloud_2_70_59.height - 1, (uint8_t *)&image_cloud_2_70_59.data, image_cloud_2_70_59.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_send_framebuffer(disp);
+	ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+}
 
 void app_main(void)
 {
@@ -609,7 +619,8 @@ void app_main(void)
     //fonts_demo(ssd1680_disp, SSD1680_BLACK);
     //fonts_demo_2(ssd1680_disp, SSD1680_BLACK);
     //font_orientation_demo(ssd1680_disp, SSD1680_BLACK);
-    partial_demo(ssd1680_disp, SSD1680_BLACK);
+    //partial_demo(ssd1680_disp, SSD1680_BLACK);
+    small_images_demo(ssd1680_disp, SSD1680_BLACK);
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH, BOTH_MODE);
 
