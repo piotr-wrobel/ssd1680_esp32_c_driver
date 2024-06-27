@@ -326,7 +326,7 @@ void static display_demo_5(ssd1680_t *disp, ssd1680_color_t color)
 
 		ssd1680_set_area(disp, 0, 0, 0 + image_pointer->width - 1, 0 + image_pointer->height - 1, (uint8_t *)image_pointer->data, image_pointer->data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 		ssd1680_send_framebuffer(disp);
-		ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+		ssd1680_refresh(disp, FAST_FULL_REFRESH);
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
 
@@ -359,7 +359,7 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 	cursor = ssd1680_display_string(disp, font, 20, (res_y / 2) - font->y_size , "Random characters test !", color);
 
 	ssd1680_send_framebuffer(disp);
-    ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+    ssd1680_refresh(disp, FAST_FULL_REFRESH);
 	vTaskDelay(2000 / portTICK_PERIOD_MS);
 
 	while(1)
@@ -412,7 +412,7 @@ void static fonts_demo(ssd1680_t *disp, ssd1680_color_t color)
 		}
 
 		ssd1680_send_framebuffer(disp);
-	    ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	    ssd1680_refresh(disp, FAST_FULL_REFRESH);
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
 }
@@ -444,7 +444,7 @@ void static fonts_demo_2(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_display_string(disp, font, 0, 45, "Characters can be positioned with acc. of 1px", color);
 
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 }
 
 void static font_orientation_demo(ssd1680_t *disp, ssd1680_color_t color)
@@ -454,28 +454,28 @@ void static font_orientation_demo(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_change_orientation(disp, SSD1680_0_DEG);
 	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 
 	ssd1680_change_orientation(disp, SSD1680_90_DEG);
 	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
 	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 
 	ssd1680_change_orientation(disp, SSD1680_180_DEG);
 	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
 	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 
 	ssd1680_change_orientation(disp, SSD1680_270_DEG);
 	ssd1680_read_ram(disp, SSD1680_READ_RAM_BW);
 	ssd1680_display_string(disp, font, 30, 16, "Test...", color);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 }
 
@@ -496,7 +496,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
-	ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_refresh(disp, FULL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
@@ -505,7 +505,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
-	ssd1680_refresh(disp, PARTIAL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_refresh(disp, PARTIAL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
 	ssd1680_fill(disp, SSD1680_WHITE);
@@ -513,9 +513,8 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
 	//ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 0, 0, 121, 249);
-	ssd1680_refresh(disp, NONE, MASTER_ACTIVATION_ONLY); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_refresh(disp, FULL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 
 
 	//vTaskDelay(3000 / portTICK_PERIOD_MS);
@@ -524,7 +523,7 @@ void static partial_demo(ssd1680_t *disp, ssd1680_color_t color)
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
 	ssd1680_send_framebuffer(disp);
 	//ssd1680_set_refresh_window(disp, 60, 0, 121, 125);
-	ssd1680_refresh(disp, PARTIAL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_refresh(disp, PARTIAL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
 }
 
 void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
@@ -539,7 +538,7 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_send_framebuffer(disp);
 
 
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 
 	memset(disp->framebuffer_bw, (SSD1680_WHITE & 0x1) * 0xFF, disp->framebuffer_size );
 	print_buffor("Filled again by white", disp->framebuffer_bw, 20);
@@ -551,16 +550,31 @@ void static ram_demo_1(ssd1680_t *disp, ssd1680_color_t color)
 	ssd1680_display_string(disp, &font_terminal_14pt, 0, 0, "Image from RAM...", color);
 	ssd1680_display_string(disp, &font_terminal_14pt, 60, 105, "Inscription added", color);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FAST_FULL_REFRESH, BOTH_MODE);
+	ssd1680_refresh(disp, FAST_FULL_REFRESH);
 }
 
 void static small_images_demo(ssd1680_t *disp, ssd1680_color_t color)
 {
 	ssd1680_fill(disp, SSD1680_WHITE);
 	ssd1680_set_area(disp, 0, 0, 0 + image_sun_1_70_66.width - 1, 0 + image_sun_1_70_66.height - 1, (uint8_t *)&image_sun_1_70_66.data, image_sun_1_70_66.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
-	ssd1680_set_area(disp, 0, 178, 0 + image_cloud_2_70_59.width - 1, 178 + image_cloud_2_70_59.height - 1, (uint8_t *)&image_cloud_2_70_59.data, image_cloud_2_70_59.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
 	ssd1680_send_framebuffer(disp);
-	ssd1680_refresh(disp, FULL_REFRESH, BOTH_MODE); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_refresh(disp, FAST_FULL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	ssd1680_display_mode(disp, SSD1680_TEMPLUTDISP2); //WAS_POWERON_SEQ, SSD1680_TEMPLUTDISP2, SSD1680_TEMPLUTDISP1, SSD1680_LUTDISP2
+	ssd1680_set_area(disp, 0, 80, 0 + image_cloud_2_70_59.width - 1, 80 + image_cloud_2_70_59.height - 1, (uint8_t *)&image_cloud_2_70_59.data, image_cloud_2_70_59.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_set_area(disp, 0, 0, 0 + image_cloud_2_70_59.width - 1, 0 + image_cloud_2_70_59.height - 1, (uint8_t *)&image_cloud_2_70_59.data, image_cloud_2_70_59.data_size, SSD1680_BLACK, SSD1680_REVERSE_FALSE, SSD1680_REVERSE_TRUE);
+	ssd1680_send_framebuffer(disp);
+	for(uint8_t i = 0; i < 3; i++) {
+		//ssd1680_send_framebuffer(disp);
+		ssd1680_refresh(disp, FAST_PARTIAL_REFRESH); //WAS_PARTIAL_REFRESH,FAST_PARTIAL_REFRESH
+	}
+
+	ssd1680_font_t * font = &font_consolas_22pt;
+	for(uint8_t i = 0; i < 10; i++) {
+		ssd1680_display_char(disp, font, 30, 180, '0' + i, color);
+		ssd1680_send_framebuffer(disp);
+		//ssd1680_set_refresh_window(disp,30,180,30 + font->x_size, 180 + font->y_size);
+		ssd1680_refresh(disp, FAST_PARTIAL_REFRESH);
+	}
 }
 
 void app_main(void)
@@ -622,10 +636,10 @@ void app_main(void)
     //partial_demo(ssd1680_disp, SSD1680_BLACK);
     small_images_demo(ssd1680_disp, SSD1680_BLACK);
     //ssd1680_send_framebuffer(ssd1680_disp);
-    //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH, BOTH_MODE);
+    //ssd1680_refresh(ssd1680_disp, FAST_FULL_REFRESH);
 
     //ssd1680_send_framebuffer(ssd1680_disp);
     //ssd1680_set_refresh_window(ssd1680_disp, 0, 180, 90, ssd1680_disp->res_y-1);
-    //ssd1680_refresh(ssd1680_disp, FAST_PARTIAL_REFRESH, BOTH_MODE);
+    //ssd1680_refresh(ssd1680_disp, FAST_PARTIAL_REFRESH);
     ssd1680_sleep(ssd1680_disp);
 }

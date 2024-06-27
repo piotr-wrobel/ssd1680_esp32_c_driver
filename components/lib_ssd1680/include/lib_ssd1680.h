@@ -18,26 +18,34 @@
 #define SPI_MASTER_FREQ_20K    (80 * 1000 * 1000 / 4000)  ///< 20KHz
 
 enum ssd1680_display_update_mode {
-  WAS_POWEROFF_SEQ 		= 0x83,		/**< From WeActStudio driver */
+
+  SSD1680_LUTDISP1		= 0x91,
+  SSD1680_LUTDISP2		= 0x99,
+
   SSD1680_TEMPLUTDISP1	= 0xB1,
   SSD1680_TEMPLUTDISP2	= 0xB9,
+
   FAST_FULL_REFRESH 	= 0xC7,		/**< Refresh whole screen in a fast way */
-  WAS_PARTIAL_REFRESH 	= 0xCC,		/**< From WeActStudio driver */
   FAST_PARTIAL_REFRESH 	= 0xCF,		/**< Refresh updated region in a fast way */
 
-  ADAFRUIT_REFRESH 		= 0xF4, 	/**< Test it ! From ADAFruit driver */
   FULL_REFRESH 			= 0xF7,		/**< Refresh whole screen in a slow robust flickery way */
-  WAS_POWERON_SEQ 		= 0xF8,		/**< From WeActStudio driver */
   PARTIAL_REFRESH	 	= 0xFF,		/**< Refresh updated region in a slow robust flickery way */
+
+  ADAFRUIT_REFRESH 		= 0xF4, 	/**< Test it ! From ADAFruit driver */
+
+  WAS_POWEROFF_SEQ 		= 0x83,		/**< From WeActStudio driver */
+  WAS_PARTIAL_REFRESH 	= 0xCC,		/**< From WeActStudio driver */
+  WAS_POWERON_SEQ 		= 0xF8,		/**< From WeActStudio driver */
+
   NONE					= 0xFF		// For security reason has been set to PARTIAL_REFRESH mode
 };
 
-typedef enum ssd1680_refresh_mode {
-	MASTER_ACTIVATION_ONLY	= 0x01,
-	UPDATE_CTRL_ONLY 			= 0x02,
-	BOTH_MODE				= 0x03,
-	OFF 					= 0x00
-} ssd1680_refresh_mode_t;
+//typedef enum ssd1680_refresh_mode {
+//	MASTER_ACTIVATION_ONLY	= 0x01,
+//	UPDATE_CTRL_ONLY 		= 0x02,
+//	BOTH_MODE				= 0x03,
+//	OFF 					= 0x00
+//} ssd1680_refresh_mode_t;
 
 enum ssd1680_tmp_sensor_ctrl{
 	TMP_INTERNAL_SENSOR = 0x80,
@@ -125,6 +133,7 @@ typedef struct {
 //	const unsigned char data[];
 //} ssd1680_font_t;
 
+void ssd1680_display_mode(ssd1680_t *disp, uint8_t mode);
 ssd1680_t *ssd1680_init(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation);
 ssd1680_t *ssd1680_init_partial(spi_host_device_t spi_host, ssd1680_pinmap_t pinmap, uint16_t res_x, uint16_t res_y, ssd1680_orientation_t orientation);
 void ssd1680_deinit(ssd1680_t* disp);
@@ -142,5 +151,5 @@ ssd1680_cursor_t ssd1680_display_string(ssd1680_t *disp, ssd1680_font_t * font, 
 void ssd1680_send_framebuffer(ssd1680_t *disp);
 
 void ssd1680_set_refresh_window(ssd1680_t *disp, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-void ssd1680_refresh(ssd1680_t *disp, uint8_t update_mode, ssd1680_refresh_mode_t refresh_mode);
+void ssd1680_refresh(ssd1680_t *disp, uint8_t update_mode); //, ssd1680_refresh_mode_t refresh_mode);
 
