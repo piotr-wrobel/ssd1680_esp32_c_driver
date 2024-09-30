@@ -1,5 +1,5 @@
-# 100com_project
-Project for "100 commits" challenge
+# SSD1680 ESP32 C-driver
+The project originally started as a "100 commits" challenge
 
 The project will use an ESP32 or similar microcontroller with WIFI or Bluetooth access, an e-paper display, sensors, and control buttons. The device will be battery-powered. Configuration and interaction via a web panel or a dedicated application. The final functionality is not yet defined.
 
